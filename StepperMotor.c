@@ -101,10 +101,11 @@ void stepperMotor1_setSpeed(float speed){
         OCR1A = 3;
     }
     else{
-        //bereken top waarde en zet snelheid
+        //bereken top waarde
         unsigned int ocr1Val = 100/(((double)1/65536)+((double)1/(1+OCR1val_min)-(double)1/65536)*speed);
-        ocr1Val = (ocr1Val<OCR1val_min)?OCR1val_min:ocr1Val;
-        OCR1A = ocr1Val;
+
+        //zet snelheid (clamp to min)
+        OCR1A = (ocr1Val<OCR1val_min)?OCR1val_min:ocr1Val;
     }
 }
 
@@ -127,29 +128,12 @@ void stepperMotor2_setSpeed(float speed){
         OCR3A = 3;
     }
     else{
-        //bereken top waarde en zet snelheid
+        //bereken top waarde
         unsigned int ocr3Val = 100/(((double)1/65536)+((double)1/(1+OCR1val_min)-(double)1/65536)*speed);
-        ocr3Val = (ocr3Val<OCR3val_min)?OCR3val_min:ocr3Val;
-        OCR3A = ocr3Val;
+
+        //zet snelheid (clamp to min)
+        OCR3A = (ocr3Val<OCR3val_min)?OCR3val_min:ocr3Val;
     }
 }
 
-void rijVooruit(void) {
-    stepperMotor1_setSpeed(vol_snelheid);
-    stepperMotor2_setSpeed(vol_snelheid);
-}
 
-void draaiLinks(void) {
-    stepperMotor1_setSpeed(half_snelheid);
-    stepperMotor2_setSpeed(vol_snelheid);
-}
-
-void draaiRechts(void) {
-    stepperMotor1_setSpeed(vol_snelheid);
-    stepperMotor2_setSpeed(half_snelheid);
-}
-
-void stopAGV(void) {
-    stepperMotor1_setSpeed(stop_motor);
-    stepperMotor2_setSpeed(stop_motor);
-}

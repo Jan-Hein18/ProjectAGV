@@ -8,6 +8,7 @@
 #include "IRSensor.h"
 #include "noodstop.h"
 #include "clock.h"
+#include "Navigatie.h"
 
 #define turn_deadzone 0.05
 #define stopTime 1
@@ -41,15 +42,7 @@ int main(void){
         //navigatie
         static int rijden = 1;
         if(rijden){
-            float afstand_links = ultrasoon_getDistance_L();
-            float afstand_rechts = ultrasoon_getDistance_R();
-
-            if(afstand_rechts > afstand_links+turn_deadzone){
-                draaiRechts();
-            }
-            else if(afstand_links > afstand_rechts+turn_deadzone){
-                draaiLinks();
-            }
+            navigeer_pad();
         }
         else{
             stopAGV();

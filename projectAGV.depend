@@ -1,0 +1,76 @@
+# depslib dependency file v1.0
+1745329284 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\clock.c
+	"clock.h"
+	<avr/io.h>
+	<avr/interrupt.h>
+	"Display1.h"
+
+1745328810 d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\clock.h
+
+1745326375 d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\display1.h
+
+1745326395 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\display1.c
+	"Display1.h"
+	"IRSensor.h"
+	<avr/io.h>
+
+1745330934 d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\irsensor.h
+	<avr/io.h>
+	<util/delay.h>
+
+1745345148 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\fuse.c
+	<avr/io.h>
+
+1745331847 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\irsensor.c
+	"IRSensor.h"
+	"util/delay.h"
+
+1745326443 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\knoppen.c
+	"Knoppen.h"
+	"Display1.h"
+
+1744624668 d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\knoppen.h
+	"Display1.h"
+	<avr/io.h>
+	<util/delay.h>
+
+1745349232 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\main.c
+	"Display1.h"
+	"StepperMotor.h"
+	"Ultrasoon.h"
+	"Knoppen.h"
+	"IRSensor.h"
+	"noodstop.h"
+	"clock.h"
+	"Navigatie.h"
+
+1745348117 d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\steppermotor.h
+
+1744209136 d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\ultrasoon.h
+	<util/delay.h>
+
+1743419552 d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\noodstop.h
+
+1744624339 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\noodstop.c
+	"noodstop.h"
+	"util/delay.h"
+	"avr/io.h"
+	"avr/interrupt.h"
+	"Display1.h"
+
+1744300268 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\ultrasoon.c
+	"Ultrasoon.h"
+	"avr/io.h"
+	"avr/interrupt.h"
+
+1745348793 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\steppermotor.c
+	"stepperMotor.h"
+	"avr/io.h"
+
+1745349146 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\navigatie.c
+	"Navigatie.h"
+	<avr/io.h>
+	"StepperMotor.h"
+
+1745349243 d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\navigatie.h
+
