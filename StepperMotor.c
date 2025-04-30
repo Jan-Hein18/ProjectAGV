@@ -51,6 +51,10 @@ void stepperMotor1_init(){
 
     //--dir pin--
     motor1_dir_DDR |= motor1_dir_bit;
+
+
+    //--stop motor
+    stepperMotor1_setSpeed(0);
 }
 
 void stepperMotor2_init(){
@@ -77,6 +81,10 @@ void stepperMotor2_init(){
 
     //--dir pin--
     motor2_dir_DDR |= motor2_dir_bit;
+
+
+    //--stop motor--
+    stepperMotor2_setSpeed(0);
 }
 
 

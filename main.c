@@ -38,6 +38,8 @@ int main(void){
     stopAGV();
     stelWaardeIn();
 
+
+
     while(1) {
         //navigatie
         static int rijden = 1;
