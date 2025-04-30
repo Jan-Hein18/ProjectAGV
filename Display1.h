@@ -2,7 +2,7 @@
 #define DISPLAY_H
 
 extern unsigned char numbers [10];
-extern unsigned char letters [7];
+extern unsigned char letters [26];
 
 extern int teller;
 extern int verwachtAantalPakketten;
@@ -10,6 +10,10 @@ extern int verwachtAantalPakketten;
 void display(unsigned int getal);
 void _7segment_setup();
 void _7segment_write(unsigned char data, unsigned char digit);
+
+void display_letter(char letter, unsigned char digit);
+void display_string(char _string[4]);
+
 void displayAantalPakketten(void);
 
 #endif // DISPLAY_H
