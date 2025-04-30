@@ -15,8 +15,8 @@
 #define stopTime 1
 #define stopDetectTime 0.1
 
-enum e_operatingState{eStop, startup,idle,module_1, module_2};
-typedef enum e_operatingState t_operatingState;
+enum enum_operatingState{e_eStop, e_startup, e_idle, e_module_1, e_module_2};
+typedef enum enum_operatingState t_operatingState;
 t_operatingState operatingState = startup;
 
 int main_new(void){
@@ -46,24 +46,24 @@ int main_new(void){
 
 
         switch(operatingState){
-        case eStop:{
+        case e_eStop:{
             stopAGV();
             display_string("STOP");
             break;
         }
-        case startup:{
+        case e_startup:{
 
             break;
         }
-        case idle:{
+        case e_idle:{
 
             break;
         }
-        case module_1:{
+        case e_module_1:{
 
             break;
         }
-        case module_2:{
+        case e_module_2:{
 
             break;
         }
