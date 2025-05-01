@@ -10,11 +10,11 @@
 
 enum enum_operatingState{e_eStop, e_startup, e_idle, e_module_1, e_module_2};
 typedef enum enum_operatingState t_operatingState;
-t_operatingState operatingState = startup;
+t_operatingState operatingState = e_startup;
 
 int main_new(void){
-    t_operatingState lastOperatingState = operatingState;
-    t_operatingState previousOperatingSate = operatingState;
+    t_operatingState lastOperatingState = operatingState; //operating state in last cycle
+    t_operatingState previousOperatingSate = operatingState; //operating state before last change
     while(1) {
         //buffer the previous operatingState when operatingState is changed
         if(lastOperatingState!=operatingState){
@@ -43,7 +43,7 @@ int main_new(void){
 
             //ui
             _7segment_setup();
-            initKnop();
+            knop_setup();
 
             //--SET NEUTRAL STATE--
             stopAGV();
@@ -53,7 +53,11 @@ int main_new(void){
             break;
         }
         case e_idle:{
+            stopAGV();
 
+            if(knop_ingedrukt(e_startKnop)){
+                operatingState = e_module_1;
+            }
             break;
         }
         case e_module_1:{

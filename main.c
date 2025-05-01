@@ -33,10 +33,9 @@ int main(void){
 
     //ui
     _7segment_setup();
-    initKnop();
+    knop_setup();
 
     stopAGV();
-    stelWaardeIn();
 
 
 

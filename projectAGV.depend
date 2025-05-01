@@ -25,16 +25,14 @@
 	"IRSensor.h"
 	"util/delay.h"
 
-1745326443 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\knoppen.c
+1746090629 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\knoppen.c
 	"Knoppen.h"
-	"Display1.h"
-
-1744624668 d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\knoppen.h
-	"Display1.h"
 	<avr/io.h>
-	<util/delay.h>
+	"clock.h"
 
-1745349408 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\main.c
+1746090577 d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\knoppen.h
+
+1746090795 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\main.c
 	"Display1.h"
 	"StepperMotor.h"
 	"Ultrasoon.h"
@@ -75,7 +73,7 @@
 
 1745349243 d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\navigatie.h
 
-1745948671 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\main_new.c
+1746090851 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\main_new.c
 	"Display1.h"
 	"StepperMotor.h"
 	"Ultrasoon.h"
