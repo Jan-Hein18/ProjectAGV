@@ -7,10 +7,15 @@
 #include "clock.h"
 #include "Navigatie.h"
 
+#define MAXWALLDISTANCE 15
 
-enum enum_operatingState{e_eStop, e_startup, e_idle, e_module_1, e_module_2};
+#define PADAFSTAND 35
+#define BOCHTAANTAL 3
+t_richting bochten[BOCHTAANTAL] = {e_rechts, e_links, e_rechts};
+
+enum enum_operatingState{e_eStop, e_reset, e_idle, e_pad, e_bocht};
 typedef enum enum_operatingState t_operatingState;
-t_operatingState operatingState = e_startup;
+t_operatingState operatingState = e_reset;
 
 int main_new(void){
     t_operatingState lastOperatingState = operatingState; //operating state in last cycle
@@ -29,7 +34,7 @@ int main_new(void){
             display_string("STOP");
             break;
         }
-        case e_startup:{
+        case e_reset:{
             //--INITIALISATIE--
             //systeem
             initClock();
@@ -37,6 +42,9 @@ int main_new(void){
             //navigatie
             ultrasoon_setup();
             stepperMotor_init();
+            navigatie_setup();
+            navigatie_setSpeed(3);
+            navigatie_setAcceleratie(3);
 
             //tellen
             initSensoren();
@@ -56,15 +64,28 @@ int main_new(void){
             stopAGV();
 
             if(knop_ingedrukt(e_startKnop)){
-                operatingState = e_module_1;
+                operatingState = e_pad;
             }
             break;
         }
-        case e_module_1:{
-
+        case e_pad:{
+            if((ultrasoon_getDistance_L()>MAXWALLDISTANCE)&&(ultrasoon_getDistance_R()>MAXWALLDISTANCE)){
+                    operatingState = e_bocht;
+            }
             break;
         }
-        case e_module_2:{
+        case e_bocht:{
+            static int bochtNr = 0;
+            if((lastOperatingState==e_pad)){
+                bochtNr++;
+                if(bochtNr>=BOCHTAANTAL){
+                    bochtNr = 0;
+                    operatingState = e_reset;
+                    break;
+                }
+            }
+
+            navigatie_navigeerBocht(bochten[bochtNr],PADAFSTAND/2);
 
             break;
         }

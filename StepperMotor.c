@@ -28,6 +28,8 @@ void stepperMotor_init(){
 
 
 void stepperMotor1_init(){
+    TCCR1B &= ~(1<<CS10);//stop clock
+
     //--timer pwm--
     //step pin direction
     motor1_step_DDR |= motor1_step_bit;
@@ -58,6 +60,8 @@ void stepperMotor1_init(){
 }
 
 void stepperMotor2_init(){
+    TCCR1B &= ~(1<<CS30);//stop clock
+
     //--timer pwm--
     //step pin direction
     motor2_step_DDR |= motor2_step_bit;

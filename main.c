@@ -43,7 +43,7 @@ int main(void){
         //navigatie
         static int rijden = 1;
         if(rijden){
-            navigeer_pad();
+            navigatie_navigeerPad();
         }
         else{
             stopAGV();

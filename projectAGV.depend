@@ -25,14 +25,14 @@
 	"IRSensor.h"
 	"util/delay.h"
 
-1746090629 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\knoppen.c
+1746091062 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\knoppen.c
 	"Knoppen.h"
 	<avr/io.h>
 	"clock.h"
 
 1746090577 d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\knoppen.h
 
-1746090795 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\main.c
+1746122226 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\main.c
 	"Display1.h"
 	"StepperMotor.h"
 	"Ultrasoon.h"
@@ -44,7 +44,7 @@
 
 1745348117 d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\steppermotor.h
 
-1744209136 d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\ultrasoon.h
+1746121522 d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\ultrasoon.h
 	<util/delay.h>
 
 1743419552 d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\noodstop.h
@@ -56,7 +56,7 @@
 	"avr/interrupt.h"
 	"Display1.h"
 
-1744300268 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\ultrasoon.c
+1746121521 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\ultrasoon.c
 	"Ultrasoon.h"
 	"avr/io.h"
 	"avr/interrupt.h"
@@ -65,15 +65,16 @@
 	"stepperMotor.h"
 	"avr/io.h"
 
-1745349268 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\navigatie.c
+1746122211 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\navigatie.c
 	"Navigatie.h"
 	<avr/io.h>
 	"StepperMotor.h"
 	"Ultrasoon.h"
+	"clock.h"
 
-1745349243 d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\navigatie.h
+1746123571 d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\navigatie.h
 
-1746090851 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\main_new.c
+1746122169 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\main_new.c
 	"Display1.h"
 	"StepperMotor.h"
 	"Ultrasoon.h"

@@ -5,8 +5,7 @@ int pakketGeteld = 0;
 int aantalPakketten = 0;
 
 void initSensoren(void) {
-    //IRRegister |= (1 << IRSensor1) | (1 << IRSensor2);
-    //IRPins |= (1 << IRSensor1) | (1 << IRSensor2);
+    IRRegister &= ~((1 << IRSensor1) | (1 << IRSensor2));
 }
 
 int detecteerPakket0(void) {

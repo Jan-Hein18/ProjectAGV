@@ -14,6 +14,8 @@ ISR(TIMER0_COMPA_vect){
 
 
 void initClock(){
+    time = 0;
+
     //OVF
     OCR0A = OVF;
 

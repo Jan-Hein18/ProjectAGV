@@ -14,10 +14,8 @@
 
 #define PRESCALAR 64
 
-#define max_stable_distance 30
+#define ULTRASOON_MAXDISTANCE 30
 
-//volatile uint8_t meting_klaar_L = 1;  // Start klaar voor eerste meting
-//volatile uint8_t meting_klaar_R = 1;
 
 volatile uint8_t nieuwe_meting_L = 0;
 volatile uint8_t nieuwe_meting_R = 0;
@@ -28,7 +26,6 @@ ISR(TIMER5_CAPT_vect) {
     //start nieuwe meting
     TCNT5 = 0;
 
-    //meting_klaar_L = 1;  // Markeer meting als voltooid
     nieuwe_meting_L = 1;
 }
 
@@ -37,7 +34,6 @@ ISR(TIMER4_CAPT_vect) {
     //start nieuwe meting
     TCNT5 = 0;
 
-    //meting_klaar_R = 1;
     nieuwe_meting_R = 1;
 }
 
@@ -48,6 +44,10 @@ void ultrasoon_setup() {
 }
 
 void ultrasoon_setup_L() {
+    TCCR5B &= ~((1 << CS50) | (1 << CS51));//stop clock
+    ICR5 = 0;
+    nieuwe_meting_L = 0;
+
     ULTRASOON_L_TRIG_DDR |= (1 << ULTRASOON_L_TRIG_BIT);  // Trigger als output
     ULTRASOON_L_ECHO_DDR &= ~(1 << ULTRASOON_L_ECHO_BIT); // Echo als input
 
@@ -66,6 +66,10 @@ void ultrasoon_setup_L() {
 }
 
 void ultrasoon_setup_R() {
+    TCCR5B &= ~((1 << CS40) | (1 << CS41));//stop clock
+    ICR4 = 0;
+    nieuwe_meting_R = 0;
+
     ULTRASOON_R_TRIG_DDR |= (1 << ULTRASOON_R_TRIG_BIT);
     ULTRASOON_R_ECHO_DDR &= ~(1 << ULTRASOON_R_ECHO_BIT);
 
@@ -81,26 +85,7 @@ void ultrasoon_setup_R() {
     TIMSK4 |= (1 << ICIE4);
 }
 
-/*void ultrasoon_trigger_L() {
-    if (meting_klaar_L) {  // Alleen nieuwe meting starten als de vorige klaar is
-        meting_klaar_L = 0;  // Reset vlag
-        ULTRASOON_L_TRIG_DDR |= (1 << ULTRASOON_L_TRIG_BIT);
-        TCNT5 = 0;  // Timer resetten
-    }
-}
-
-void ultrasoon_trigger_R() {
-    if (meting_klaar_R) {
-        meting_klaar_R = 0;
-        ULTRASOON_R_TRIG_DDR |= (1 << ULTRASOON_R_TRIG_BIT);
-        TCNT4 = 0;
-    }
-}*/
-
 float ultrasoon_getDistance_L() {
-    /*static float last_valid_distance = 30.0;
-    static int zero_count = 0;*/
-
     static float afstand_in_cm = 0;
 
     if(nieuwe_meting_L){//alleen berekenen als de meetwaarde veranderd is
@@ -111,24 +96,11 @@ float ultrasoon_getDistance_L() {
             afstand_in_cm = pulseTime_us / 58.0;
         }
 
-        if (afstand_in_cm > max_stable_distance) {  // Fix stability issue at long distances
-            afstand_in_cm = max_stable_distance;
+        if (afstand_in_cm > ULTRASOON_MAXDISTANCE) {  // Fix stability issue at long distances
+            afstand_in_cm = ULTRASOON_MAXDISTANCE;
         }
     }
 
-
-    //Dit kan (bijna) niet als je hier nog wat mee wil voor de bochten zou ik dit doen met afstand > 30 in de main, of 4 regels hierboven
-    /*if (afstand_in_cm == 0) {
-        zero_count++;
-        if (zero_count >= 3) {
-            return 0;  // Confirmed "wall lost"
-        }
-        return last_valid_distance;
-    } else {
-        zero_count = 0;
-    }
-
-    last_valid_distance = (last_valid_distance * 0.7) + (afstand_in_cm * 0.3);*/
     return afstand_in_cm;
 }
 
@@ -136,10 +108,7 @@ float ultrasoon_getDistance_L() {
 
 
 float ultrasoon_getDistance_R() {
-    /*static float last_valid_distance = 30.0;
-    static int zero_count = 0;*/
-
-    static float afstand_in_cm = 30;
+    static float afstand_in_cm = 0;
 
     if(nieuwe_meting_R){//alleen berekenen als de meetwaarde veranderd is
         nieuwe_meting_R = 0;
@@ -150,22 +119,11 @@ float ultrasoon_getDistance_R() {
         }
 
 
-        if (afstand_in_cm > max_stable_distance) {  // Fix stability issue at long distances
-            afstand_in_cm = max_stable_distance;
+        if (afstand_in_cm > ULTRASOON_MAXDISTANCE) {  // Fix stability issue at long distances
+            afstand_in_cm = ULTRASOON_MAXDISTANCE;
         }
     }
 
-    /*if (afstand_in_cm == 0) {
-        zero_count++;
-        if (zero_count >= 3) {
-            return 0;  // Confirmed "wall lost"
-        }
-        return last_valid_distance;
-    } else {
-        zero_count = 0;
-    }
-
-    last_valid_distance = (last_valid_distance * 0.7) + (afstand_in_cm * 0.3);*/
     return afstand_in_cm;
 }
 
