@@ -1,49 +1,51 @@
 #include "IRSensor.h"
-#include "util/delay.h"
 
-int pakketGeteld = 0;
-int aantalPakketten = 0;
+#include <avr/io.h>
+
+#include "clock.h"
+
+
+#define IRREGISTER DDRK
+#define IRPINS PINK
+#define IRSENSOR_L PK0
+#define IRSENSOR_R PK1
+
+#define DEBOUNCETIME_MS 50
+
 
 void initSensoren(void) {
-    IRRegister &= ~((1 << IRSensor1) | (1 << IRSensor2));
+    IRREGISTER &= ~((1 << IRSENSOR_L) | (1 << IRSENSOR_R));
 }
 
-int detecteerPakket0(void) {
-    int detect1 = 0;
-    if(!(IRPins & (1 << IRSensor1))) {
-        detect1 =1;
+
+int IRSensor_links(){
+    static int IRSensorActief = 0;
+    static float ActivatieTijd = 0;
+
+    if((!(IRPINS&(1<<IRSENSOR_L)))&&(!IRSensorActief)&&((ActivatieTijd+DEBOUNCETIME_MS)<time)){
+        IRSensorActief = 1;
+        ActivatieTijd = time;
+    }
+    else if((IRPINS&(1<<IRSENSOR_L))&&(IRSensorActief)&&((ActivatieTijd+DEBOUNCETIME_MS)<time)){
+        IRSensorActief = 0;
+        ActivatieTijd = time;
     }
 
-    if(detect1){
-        _delay_ms(10);
-        if(!(IRPins & (1 << IRSensor1))) {
-            return 1;
-        }
-    }
-    return 0;
+    return IRSensorActief;
 }
 
-int detecteerPakket1(void) {
-    int detect2 = 0;
-    if(!(IRPins &(1 << IRSensor2))) {
-        detect2 =1;
+int IRSensor_rechts(){
+    static int IRSensorActief = 0;
+    static float ActivatieTijd = 0;
+
+    if((!(IRPINS&(1<<IRSENSOR_R)))&&(!IRSensorActief)&&((ActivatieTijd+DEBOUNCETIME_MS)<time)){
+        IRSensorActief = 1;
+        ActivatieTijd = time;
+    }
+    else if((IRPINS&(1<<IRSENSOR_R))&&(IRSensorActief)&&((ActivatieTijd+DEBOUNCETIME_MS)<time)){
+        IRSensorActief = 0;
+        ActivatieTijd = time;
     }
 
-    if(detect2){
-        _delay_ms(10);
-        if(!(IRPins &(1 << IRSensor2))) {
-        return 1;
-        }
-    }
-    return 0;
-}
-
-int telPakketten(void) {
-    if(detecteerPakket1()||detecteerPakket0()) {
-        if(pakketGeteld == 0) {
-            aantalPakketten++;
-            pakketGeteld = 1;
-        }
-    }
-    return aantalPakketten;
+    return IRSensorActief;
 }

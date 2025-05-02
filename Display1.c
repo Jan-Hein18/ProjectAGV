@@ -1,6 +1,7 @@
 #include "Display1.h"
 #include "IRSensor.h"
 #include <avr/io.h>
+#include <util/delay.h>
 
 
 #define SCLK_DDR DDRF
@@ -14,9 +15,6 @@
 #define SCLK_PIN (1<<6)
 #define LCLK_PIN (1<<7)
 #define DATA_PIN (1<<5)
-
-int teller = 0;
-int verwachtAantalPakketten = 0;
 
 unsigned char numbers [10] = {
   0b00111111,
@@ -69,6 +67,9 @@ void display_letter(char letter, unsigned char digit){
     else if((97<=letter)&&(letter<=122)){
         _7segment_write(letters[letter-97],digit);
     }
+    else if(letter==32){
+        _7segment_write(0,digit);
+    }
 }
 
 void display_string(char _string[4]){
@@ -103,21 +104,12 @@ void _7segment_write(unsigned char data, unsigned char digit){
   LCLK_PORT |= LCLK_PIN;
 }
 
-void display(unsigned int getal) {
+void display_getal(unsigned int getal) {
     for (int i = 3; i > -1; i--){
         _7segment_write(numbers[getal%10], i);
         getal /= 10;
         _delay_ms(1);
     }
     _7segment_write(0,0);
-}
-
-void displayGeteldAantalPakketten() {
-    display(teller * 100 + verwachtAantalPakketten);
-}
-
-void displayAantalPakketten(void)
-{
-    display(teller * 100 + verwachtAantalPakketten);
 }
 

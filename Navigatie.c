@@ -18,15 +18,18 @@
 
 
 float navigatie_speedGoal = 0;
-float navigatie_speedCurrent = 0;
+static float navigatie_speedCurrent = 0;
 float navigatie_acceleratie = 0;
-float navigatie_acceleratieTijd = 0;
+static float navigatie_executieTijd = 0;
+
+float navigatie_afstandAfgelegd = 0;
 
 void navigatie_setup(){
     navigatie_speedGoal = 0;
     navigatie_speedCurrent = 0;
     navigatie_acceleratie = 0;
-    navigatie_acceleratieTijd = time;
+    navigatie_afstandAfgelegd = 0;
+    navigatie_executieTijd = time;
 }
 
 
@@ -52,12 +55,16 @@ void navigatie_navigeerPad(){
 }
 
 void navigatie_navigeerBocht(t_richting f_draaiRichting, int f_radiusCm){
+    //update afstand
+    static float lastRealSpeed = 0; //compenseer voor snelheid in bochten
+    navigatie_afstandAfgelegd += lastRealSpeed*(time-navigatie_executieTijd);
+
     //bereken snelheid
-    navigatie_speedCurrent += navigatie_acceleratie*(time-navigatie_acceleratieTijd);
+    navigatie_speedCurrent += navigatie_acceleratie*(time-navigatie_executieTijd);
     if(navigatie_speedCurrent>navigatie_speedGoal){
         navigatie_speedCurrent = navigatie_speedGoal;
     }
-    navigatie_acceleratieTijd = time;
+    navigatie_executieTijd = time;
 
 
     if(f_radiusCm<MIN_RADIUS){//limiteer radius
@@ -68,22 +75,26 @@ void navigatie_navigeerBocht(t_richting f_draaiRichting, int f_radiusCm){
     case e_links:{
         stepperMotor1_setSpeed(((2*f_radiusCm-AGV_WIDTH)/(2*f_radiusCm+AGV_WIDTH))*navigatie_speedCurrent);
         stepperMotor2_setSpeed(navigatie_speedCurrent);
+        lastRealSpeed = ((2*f_radiusCm)/(2*f_radiusCm+AGV_WIDTH))*navigatie_speedCurrent;
         break;
     }
     case e_rechts:{
         stepperMotor1_setSpeed(navigatie_speedCurrent);
         stepperMotor2_setSpeed(((2*f_radiusCm-AGV_WIDTH)/(2*f_radiusCm+AGV_WIDTH))*navigatie_speedCurrent);
+        lastRealSpeed = ((2*f_radiusCm)/(2*f_radiusCm+AGV_WIDTH))*navigatie_speedCurrent;
         break;
     }
     case e_vooruit:{
         stepperMotor1_setSpeed(MOTORCONSTANT*navigatie_speedCurrent);
         stepperMotor2_setSpeed(MOTORCONSTANT*navigatie_speedCurrent);
+        lastRealSpeed = navigatie_speedCurrent;
         break;
     }
     default:{//stop zsm
         stepperMotor1_setSpeed(0);
         stepperMotor2_setSpeed(0);
         navigatie_speedCurrent = 0;
+        lastRealSpeed = 0;
         break;
     }
     }

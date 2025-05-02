@@ -28,7 +28,7 @@ ISR(INT2_vect){
 
     _delay_ms(20);
     if(noodstop_PIN&noodstop_BIT){//run continuous while e-stop active
-        display(1000);
+        display_getal(1000);
     }
 
 
