@@ -14,6 +14,7 @@
 #define MINKNOP     PF1
 
 #define DEBOUNCETIME_MS 10
+#define DEBOUNCETIME_S (DEBOUNCETIME_MS*0.001)
 
 
 
@@ -30,11 +31,11 @@ int knop_ingedrukt(t_knoppen knop){
             static int knopIngedrukt = 0;
             static float knopTijd = 0;
 
-            if((!(KNOPPINS&(1<<STARTKNOP)))&&(!knopIngedrukt)&&((knopTijd+DEBOUNCETIME_MS)<time)){
+            if((!(KNOPPINS&(1<<STARTKNOP)))&&(!knopIngedrukt)&&((knopTijd+DEBOUNCETIME_S)<time)){
                 knopIngedrukt = 1;
                 knopTijd = time;
             }
-            else if((KNOPPINS&(1<<STARTKNOP))&&(knopIngedrukt)&&((knopTijd+DEBOUNCETIME_MS)<time)){
+            else if((KNOPPINS&(1<<STARTKNOP))&&(knopIngedrukt)&&((knopTijd+DEBOUNCETIME_S)<time)){
                 knopIngedrukt = 0;
                 knopTijd = time;
             }
@@ -45,11 +46,11 @@ int knop_ingedrukt(t_knoppen knop){
             static int knopIngedrukt = 0;
             static float knopTijd = 0;
 
-            if((!(KNOPPINS&(1<<PLUSKNOP)))&&(!knopIngedrukt)&&((knopTijd+DEBOUNCETIME_MS)<time)){
+            if((!(KNOPPINS&(1<<PLUSKNOP)))&&(!knopIngedrukt)&&((knopTijd+DEBOUNCETIME_S)<time)){
                 knopIngedrukt = 1;
                 knopTijd = time;
             }
-            else if((KNOPPINS&(1<<PLUSKNOP))&&(knopIngedrukt)&&((knopTijd+DEBOUNCETIME_MS)<time)){
+            else if((KNOPPINS&(1<<PLUSKNOP))&&(knopIngedrukt)&&((knopTijd+DEBOUNCETIME_S)<time)){
                 knopIngedrukt = 0;
                 knopTijd = time;
             }
@@ -60,11 +61,11 @@ int knop_ingedrukt(t_knoppen knop){
             static int knopIngedrukt = 0;
             static float knopTijd = 0;
 
-            if((!(KNOPPINS&(1<<MINKNOP)))&&(!knopIngedrukt)&&((knopTijd+DEBOUNCETIME_MS)<time)){
+            if((!(KNOPPINS&(1<<MINKNOP)))&&(!knopIngedrukt)&&((knopTijd+DEBOUNCETIME_S)<time)){
                 knopIngedrukt = 1;
                 knopTijd = time;
             }
-            else if((KNOPPINS&(1<<MINKNOP))&&(knopIngedrukt)&&((knopTijd+DEBOUNCETIME_MS)<time)){
+            else if((KNOPPINS&(1<<MINKNOP))&&(knopIngedrukt)&&((knopTijd+DEBOUNCETIME_S)<time)){
                 knopIngedrukt = 0;
                 knopTijd = time;
             }

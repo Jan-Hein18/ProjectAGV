@@ -34,8 +34,24 @@ int main(void){
 
         switch(operatingState){
         case e_eStop:{
+            static int continueOperation = 0;
+
             stopAGV();
-            display_string("STOP");
+
+            if(((int)time*10)%5){
+                display_string(continueOperation?"cont":"rset");
+            }
+            else{
+                display_string("STOP");
+            }
+
+
+            if(knop_ingedrukt(e_startKnop)){
+                operatingState = continueOperation?previousOperatingSate:e_reset;
+            }
+            else if(knop_ingedrukt(e_plusKnop)||knop_ingedrukt(e_minKnop)){
+                continueOperation = !continueOperation;
+            }
             break;
         }
         case e_reset:{

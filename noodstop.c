@@ -11,6 +11,10 @@
 
 #include "Display1.h"
 
+//access to operatingstate in main
+enum enum_operatingState{e_eStop, e_reset, e_idle, e_pad, e_bocht, e_end};
+typedef enum enum_operatingState t_operatingState;
+extern t_operatingState operatingState;
 
 void noodstop_Setup(){
     noodstop_DDR &= ~noodstop_BIT;
@@ -23,17 +27,15 @@ void noodstop_Setup(){
 
 ISR(INT2_vect){
     //run once when e-stop active
-
-
+    operatingState = e_eStop;
 
     _delay_ms(20);
     if(noodstop_PIN&noodstop_BIT){//run continuous while e-stop active
-        display_getal(1000);
+        display_string("STOP");
     }
 
 
     //run once when e-stop deactivated
-
 
 }
 
