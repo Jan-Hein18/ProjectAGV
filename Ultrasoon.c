@@ -32,7 +32,7 @@ ISR(TIMER5_CAPT_vect) {
 // ISR voor rechter sensor (echo ontvangen)
 ISR(TIMER4_CAPT_vect) {
     //start nieuwe meting
-    TCNT5 = 0;
+    TCNT4 = 0;
 
     nieuwe_meting_R = 1;
 }
@@ -66,7 +66,7 @@ void ultrasoon_setup_L() {
 }
 
 void ultrasoon_setup_R() {
-    TCCR5B &= ~((1 << CS40) | (1 << CS41));//stop clock
+    TCCR4B &= ~((1 << CS40) | (1 << CS41));//stop clock
     ICR4 = 0;
     nieuwe_meting_R = 0;
 

@@ -30,6 +30,9 @@ int knop_ingedrukt(t_knoppen knop){
         case e_startKnop:{
             static int knopIngedrukt = 0;
             static float knopTijd = 0;
+            if(knopTijd>time){
+                knopTijd = 0;
+            }
 
             if((!(KNOPPINS&(1<<STARTKNOP)))&&(!knopIngedrukt)&&((knopTijd+DEBOUNCETIME_S)<time)){
                 knopIngedrukt = 1;
@@ -45,6 +48,9 @@ int knop_ingedrukt(t_knoppen knop){
         case e_plusKnop:{
             static int knopIngedrukt = 0;
             static float knopTijd = 0;
+            if(knopTijd>time){
+                knopTijd = 0;
+            }
 
             if((!(KNOPPINS&(1<<PLUSKNOP)))&&(!knopIngedrukt)&&((knopTijd+DEBOUNCETIME_S)<time)){
                 knopIngedrukt = 1;
@@ -60,6 +66,9 @@ int knop_ingedrukt(t_knoppen knop){
         case e_minKnop:{
             static int knopIngedrukt = 0;
             static float knopTijd = 0;
+            if(knopTijd>time){
+                knopTijd = 0;
+            }
 
             if((!(KNOPPINS&(1<<MINKNOP)))&&(!knopIngedrukt)&&((knopTijd+DEBOUNCETIME_S)<time)){
                 knopIngedrukt = 1;

@@ -22,6 +22,9 @@ void initSensoren(void) {
 int IRSensor_links(){
     static int IRSensorActief = 0;
     static float ActivatieTijd = 0;
+    if(ActivatieTijd>time){
+        ActivatieTijd = 0;
+    }
 
     if((!(IRPINS&(1<<IRSENSOR_L)))&&(!IRSensorActief)&&((ActivatieTijd+DEBOUNCETIME_S)<time)){
         IRSensorActief = 1;
@@ -38,6 +41,9 @@ int IRSensor_links(){
 int IRSensor_rechts(){
     static int IRSensorActief = 0;
     static float ActivatieTijd = 0;
+    if(ActivatieTijd>time){
+        ActivatieTijd = 0;
+    }
 
     if((!(IRPINS&(1<<IRSENSOR_R)))&&(!IRSensorActief)&&((ActivatieTijd+DEBOUNCETIME_S)<time)){
         IRSensorActief = 1;

@@ -13,9 +13,11 @@
 
 #define MAXWALLDISTANCE 15
 
-#define PADAFSTAND 35
-#define BOCHTAANTAL 3
-t_richting bochten[BOCHTAANTAL] = {e_rechts, e_links, e_rechts};
+#define SPEED 0.125
+
+#define PADAFSTAND 36
+#define BOCHTAANTAL 1
+t_richting bochten[BOCHTAANTAL] = {e_rechts};//, e_links, e_rechts};
 
 enum enum_operatingState{e_eStop, e_reset, e_idle, e_pad, e_bocht, e_end};
 typedef enum enum_operatingState t_operatingState;
@@ -24,15 +26,16 @@ t_operatingState operatingState = e_reset;
 int main(void){
     t_operatingState lastOperatingState = operatingState; //operating state in last cycle
     t_operatingState previousOperatingSate = operatingState; //operating state before last change
+    t_operatingState startOperatingState = operatingState;
     while(1) {
         //buffer the previous operatingState when operatingState is changed
+        startOperatingState = operatingState;
         if(lastOperatingState!=operatingState){
             previousOperatingSate = lastOperatingState;
         }
-        lastOperatingState = operatingState;
 
 
-        switch(operatingState){
+        switch(startOperatingState){
         case e_eStop:{
             static int continueOperation = 0;
 
@@ -105,6 +108,7 @@ int main(void){
             break;
         }
         case e_pad:{
+            navigatie_speedGoal = SPEED;
             navigatie_navigeerPad();
 
             telPakketten();
@@ -114,38 +118,40 @@ int main(void){
                 operatingState = e_end;
             }
             else if((ultrasoon_getDistance_L()>MAXWALLDISTANCE)&&(ultrasoon_getDistance_R()>MAXWALLDISTANCE)){
-                    operatingState = e_bocht;
+                operatingState = e_bocht;
             }
             break;
         }
         case e_bocht:{
             static int bochtNr = 0;
-            static int startAfstand = 0;
+            static float startAfstand = 0;
             if((lastOperatingState==e_pad)){
                 bochtNr++;
                 startAfstand = navigatie_afstandAfgelegd;
-                if(bochtNr>=BOCHTAANTAL){
+                if(bochtNr>BOCHTAANTAL){
                     bochtNr = 0;
                     operatingState = e_end;
                     break;
                 }
             }
-
-            navigatie_navigeerBocht(bochten[bochtNr],PADAFSTAND/2);
-
-            if((navigatie_afstandAfgelegd-startAfstand)>(3.14*PADAFSTAND/2)){
+            navigatie_speedGoal = SPEED;
+            navigatie_navigeerBocht(bochten[bochtNr-1],PADAFSTAND/2);
+            display_getal((navigatie_afstandAfgelegd-startAfstand)*10+1000*bochtNr);
+            if((navigatie_afstandAfgelegd-startAfstand)>(3.14*(PADAFSTAND*0.01)/2)){
                 operatingState = e_pad;
             }
             break;
         }
         case e_end:{
             display_string("end ");
+            stopAGV();
 
             if(knop_ingedrukt(e_startKnop)){
                 operatingState = e_reset;
             }
         }
         }
+        lastOperatingState = startOperatingState;
     }
 
     return 0;

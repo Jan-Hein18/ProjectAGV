@@ -60,7 +60,7 @@ void stepperMotor1_init(){
 }
 
 void stepperMotor2_init(){
-    TCCR1B &= ~(1<<CS30);//stop clock
+    TCCR3B &= ~(1<<CS30);//stop clock
 
     //--timer pwm--
     //step pin direction

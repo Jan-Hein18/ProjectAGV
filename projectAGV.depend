@@ -20,17 +20,17 @@
 1745345148 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\fuse.c
 	<avr/io.h>
 
-1746210035 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\irsensor.c
+1746614065 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\irsensor.c
 	"IRSensor.h"
 	<avr/io.h>
 	"clock.h"
 
-1746210028 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\knoppen.c
+1746614030 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\knoppen.c
 	"Knoppen.h"
 	<avr/io.h>
 	"clock.h"
 
-1746090577 d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\knoppen.h
+1746613961 d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\knoppen.h
 
 1746210366 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\main.c
 	"Display1.h"
@@ -50,30 +50,31 @@
 
 1743419552 d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\noodstop.h
 
-1746202492 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\noodstop.c
+1746210509 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\noodstop.c
 	"noodstop.h"
 	"util/delay.h"
 	"avr/io.h"
 	"avr/interrupt.h"
 	"Display1.h"
 
-1746122893 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\ultrasoon.c
+1746623976 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\ultrasoon.c
 	"Ultrasoon.h"
 	"avr/io.h"
 	"avr/interrupt.h"
 
-1746122956 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\steppermotor.c
+1746622806 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\steppermotor.c
 	"stepperMotor.h"
 	"avr/io.h"
 
-1746201305 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\navigatie.c
+1746624533 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\navigatie.c
 	"Navigatie.h"
 	<avr/io.h>
 	"StepperMotor.h"
 	"Ultrasoon.h"
 	"clock.h"
+	"Display1.h"
 
-1746199444 d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\navigatie.h
+1746622303 d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\navigatie.h
 
 1746200351 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\main_new.c
 	"Display1.h"

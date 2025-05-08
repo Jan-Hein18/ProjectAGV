@@ -5,20 +5,21 @@
 #include "StepperMotor.h"
 #include "Ultrasoon.h"
 #include "clock.h"
+#include "Display1.h"
 
 
-#define AGV_WIDTH 25 //wheel to wheel [cm]
-#define MAX_SPEED 2 // [m/s]
-#define MAX_ACCELERATIE 2 // [m/s]
+#define AGV_WIDTH 18.5 //wheel to wheel [cm]
+#define MAX_SPEED 0.2 // [m/s]
+#define MAX_ACCELERATIE 1 // [m/s2]
 #define MIN_RADIUS (AGV_WIDTH/2) //[cm]
-#define MOTORCONSTANT 0.1 //[m/(s*percent)]
-#define TURNCONSTANT 10 //turn radius when difference between wall distances is 1cm [cm]
+#define MOTORCONSTANT 425 //[percent/(m/s)]
+#define TURNCONSTANT 1 //turn radius when difference between wall distances is 1cm [cm]
 #define PAD_TURNDEADZONE 0.5 //[cm]
 
 
 
 float navigatie_speedGoal = 0;
-static float navigatie_speedCurrent = 0;
+float navigatie_speedCurrent = 0;
 float navigatie_acceleratie = 0;
 static float navigatie_executieTijd = 0;
 
@@ -52,6 +53,7 @@ void navigatie_navigeerPad(){
     else{
         navigatie_navigeerBocht(e_vooruit,0);
     }
+    //navigatie_navigeerBocht(e_vooruit,0);
 }
 
 void navigatie_navigeerBocht(t_richting f_draaiRichting, int f_radiusCm){
@@ -73,14 +75,14 @@ void navigatie_navigeerBocht(t_richting f_draaiRichting, int f_radiusCm){
 
     switch(f_draaiRichting){
     case e_links:{
-        stepperMotor1_setSpeed(((2*f_radiusCm-AGV_WIDTH)/(2*f_radiusCm+AGV_WIDTH))*navigatie_speedCurrent);
-        stepperMotor2_setSpeed(navigatie_speedCurrent);
+        stepperMotor1_setSpeed(MOTORCONSTANT*((2*f_radiusCm-AGV_WIDTH)/(2*f_radiusCm+AGV_WIDTH))*navigatie_speedCurrent);
+        stepperMotor2_setSpeed(MOTORCONSTANT*navigatie_speedCurrent);
         lastRealSpeed = ((2*f_radiusCm)/(2*f_radiusCm+AGV_WIDTH))*navigatie_speedCurrent;
         break;
     }
     case e_rechts:{
-        stepperMotor1_setSpeed(navigatie_speedCurrent);
-        stepperMotor2_setSpeed(((2*f_radiusCm-AGV_WIDTH)/(2*f_radiusCm+AGV_WIDTH))*navigatie_speedCurrent);
+        stepperMotor1_setSpeed(MOTORCONSTANT*navigatie_speedCurrent);
+        stepperMotor2_setSpeed(MOTORCONSTANT*(((2*f_radiusCm-AGV_WIDTH)/(2*f_radiusCm+AGV_WIDTH))*navigatie_speedCurrent));
         lastRealSpeed = ((2*f_radiusCm)/(2*f_radiusCm+AGV_WIDTH))*navigatie_speedCurrent;
         break;
     }

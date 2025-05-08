@@ -5,6 +5,7 @@ enum enum_richting{e_links,e_rechts, e_vooruit};
 typedef enum enum_richting t_richting;
 
 extern float navigatie_speedGoal;
+extern float navigatie_speedCurrent;
 extern float navigatie_acceleratie;
 extern float navigatie_afstandAfgelegd;
 
