@@ -7,6 +7,7 @@
 #include "clock.h"
 #include "Navigatie.h"
 #include "pakketten.h"
+#include "com_agv.h"
 
 
 #define PAKKETAANTAL 5
@@ -19,7 +20,7 @@
 #define BOCHTAANTAL 1
 t_richting bochten[BOCHTAANTAL] = {e_rechts};//, e_links, e_rechts};
 
-enum enum_operatingState{e_eStop, e_reset, e_idle, e_pad, e_bocht, e_end};
+enum enum_operatingState{e_eStop, e_reset, e_idle, e_pad, e_bochtState, e_blockBlock, e_volg};
 typedef enum enum_operatingState t_operatingState;
 t_operatingState operatingState = e_reset;
 
@@ -37,24 +38,7 @@ int main(void){
 
         switch(startOperatingState){
         case e_eStop:{
-            static int continueOperation = 0;
-
             stopAGV();
-
-            if(((int)time*10)%5){
-                display_string(continueOperation?"cont":"rset");
-            }
-            else{
-                display_string("STOP");
-            }
-
-
-            if(knop_ingedrukt(e_startKnop)){
-                operatingState = continueOperation?previousOperatingSate:e_reset;
-            }
-            else if(knop_ingedrukt(e_plusKnop)||knop_ingedrukt(e_minKnop)){
-                continueOperation = !continueOperation;
-            }
             break;
         }
         case e_reset:{
@@ -79,6 +63,9 @@ int main(void){
                 _7segment_setup();
                 knop_setup();
 
+                //com
+                com_setup();
+
                 //--SET NEUTRAL STATE--
                 stopAGV();
                 _7segment_write(0,0);
@@ -99,56 +86,46 @@ int main(void){
         }
         case e_idle:{
             stopAGV();
-
-            display_string("idle");
-
-            if(knop_ingedrukt(e_startKnop)){
-                operatingState = e_pad;
-            }
             break;
         }
         case e_pad:{
-            navigatie_speedGoal = SPEED;
             navigatie_navigeerPad();
 
-            telPakketten();
-            display_getal(PAKKETAANTAL*100+aantalPakketten);
 
-            if(aantalPakketten>=PAKKETAANTAL){
-                operatingState = e_end;
-            }
-            else if((ultrasoon_getDistance_L()>MAXWALLDISTANCE)&&(ultrasoon_getDistance_R()>MAXWALLDISTANCE)){
-                operatingState = e_bocht;
+            if((ultrasoon_getDistance_L()>MAXWALLDISTANCE)&&(ultrasoon_getDistance_R()>MAXWALLDISTANCE)){
+                com_doneCommand();
+                operatingState = e_idle;
             }
             break;
         }
-        case e_bocht:{
-            static int bochtNr = 0;
+        case e_bochtState:{
             static float startAfstand = 0;
-            if((lastOperatingState==e_pad)){
-                bochtNr++;
+            switch(lastOperatingState){
+            case e_bochtState:
+            case e_idle:
+            case e_eStop:{
+                break;
+            }
+            default:{
                 startAfstand = navigatie_afstandAfgelegd;
-                if(bochtNr>BOCHTAANTAL){
-                    bochtNr = 0;
-                    operatingState = e_end;
-                    break;
-                }
+                break;
             }
-            navigatie_speedGoal = SPEED;
-            navigatie_navigeerBocht(bochten[bochtNr-1],PADAFSTAND/2);
-            display_getal((navigatie_afstandAfgelegd-startAfstand)*10+1000*bochtNr);
+            };
+            navigatie_navigeerBocht(com_command.arg,PADAFSTAND/2);
             if((navigatie_afstandAfgelegd-startAfstand)>(3.14*(PADAFSTAND*0.01)/2)){
-                operatingState = e_pad;
+                com_doneCommand();
+                operatingState = e_idle;
             }
+
             break;
         }
-        case e_end:{
-            display_string("end ");
+        case e_blockBlock:{
             stopAGV();
-
-            if(knop_ingedrukt(e_startKnop)){
-                operatingState = e_reset;
-            }
+            break;
+        }
+        case e_volg:{
+            stopAGV();
+            break;
         }
         }
         lastOperatingState = startOperatingState;

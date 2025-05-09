@@ -124,6 +124,6 @@ float ultrasoon_getDistance_R() {
         }
     }
 
-    return afstand_in_cm;
+    return afstand_in_cm ;
 }
 

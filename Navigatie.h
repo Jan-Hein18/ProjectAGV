@@ -1,7 +1,7 @@
 #ifndef navigatie_included
 #define navigatie_included
 
-enum enum_richting{e_links,e_rechts, e_vooruit};
+enum enum_richting{e_links = 0x01, e_rechts = 0x02, e_vooruit};
 typedef enum enum_richting t_richting;
 
 extern float navigatie_speedGoal;
