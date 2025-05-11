@@ -10,15 +10,11 @@
 #include "com_agv.h"
 
 
-#define PAKKETAANTAL 5
+#define BLOKBLOKMODUS 3 //0 : eindig direct na S-bocht, 1 : rij achteruit tot in normaal pad, 2 : rij achteruit tot gelijk aan start positie, 3 : rij achteruit door gelijk aan padModus
 
 #define MAXWALLDISTANCE 15
 
-#define SPEED 0.125
-
 #define PADAFSTAND 36
-#define BOCHTAANTAL 1
-t_richting bochten[BOCHTAANTAL] = {e_rechts};//, e_links, e_rechts};
 
 enum enum_operatingState{e_eStop, e_reset, e_idle, e_pad, e_bochtState, e_blockBlock, e_volg};
 typedef enum enum_operatingState t_operatingState;
@@ -39,6 +35,9 @@ int main(void){
         switch(startOperatingState){
         case e_eStop:{
             stopAGV();
+            if(!noodstop_ingedrukt()){
+                operatingState = previousOperatingSate;
+            }
             break;
         }
         case e_reset:{
@@ -89,6 +88,8 @@ int main(void){
             break;
         }
         case e_pad:{
+            navigatie_reverse = com_command.arg<0x7F;
+            navigatie_setSpeed(com_command.speed);
             navigatie_navigeerPad();
 
 
@@ -102,7 +103,6 @@ int main(void){
             static float startAfstand = 0;
             switch(lastOperatingState){
             case e_bochtState:
-            case e_idle:
             case e_eStop:{
                 break;
             }
@@ -111,6 +111,8 @@ int main(void){
                 break;
             }
             };
+
+            navigatie_setSpeed(com_command.speed);
             navigatie_navigeerBocht(com_command.arg,PADAFSTAND/2);
             if((navigatie_afstandAfgelegd-startAfstand)>(3.14*(PADAFSTAND*0.01)/2)){
                 com_doneCommand();
@@ -120,7 +122,91 @@ int main(void){
             break;
         }
         case e_blockBlock:{
-            stopAGV();
+            static float startAfstand = 0;
+            static float muurGatAfstand = 0;//afstand tussen start en het gat in de muur
+            static float reverse = 0;
+            switch(lastOperatingState){
+            case e_blockBlock:
+            case e_eStop:{
+                //geen reset
+                break;
+            }
+            default:{
+                //reset
+                startAfstand = navigatie_afstandAfgelegd;
+                muurGatAfstand = 0;
+                reverse = navigatie_reverse;
+                break;
+            }
+            };
+
+            navigatie_navigeerBocht(com_command.arg,PADAFSTAND/2);
+
+            if(!muurGatAfstand){
+                navigatie_setSpeed(com_command.speed);
+                navigatie_navigeerPad();
+                if(((com_command.arg==e_rechts)?ultrasoon_getDistance_R():ultrasoon_getDistance_L())>MAXWALLDISTANCE){
+                    muurGatAfstand = navigatie_afstandAfgelegd-startAfstand;
+                }
+            }
+            if((navigatie_afstandAfgelegd-(startAfstand+muurGatAfstand))<(3.14*(PADAFSTAND*0.01)/4)){//kwart rondje naar gat
+                navigatie_setSpeed(com_command.speed);
+                navigatie_navigeerBocht((com_command.arg==e_rechts)?e_rechts:e_links,PADAFSTAND/2);
+
+            }
+            else if((navigatie_afstandAfgelegd-(startAfstand+muurGatAfstand))<(3.14*(PADAFSTAND*0.01)/2)){//kwart rondje terug in pad
+                navigatie_setSpeed(com_command.speed);
+                navigatie_navigeerBocht((com_command.arg==e_rechts)?e_links:e_rechts,PADAFSTAND/2);
+            }
+            else{
+                navigatie_reverse = !reverse;
+                navigatie_setSpeed(com_command.speed);
+
+                switch(BLOKBLOKMODUS){
+                case 0:{//tot in pad
+                    navigatie_navigeerBocht(e_vooruit,0);
+                    if((ultrasoon_getDistance_L()<MAXWALLDISTANCE)&&(ultrasoon_getDistance_R()<MAXWALLDISTANCE)){
+                        com_doneCommand();
+                        operatingState = e_idle;
+                    }
+                    break;
+                }
+                case 1:{//tot bochtstralen teruggereden en in pad
+                    navigatie_navigeerBocht(e_vooruit,0);
+                    if(((navigatie_afstandAfgelegd-startAfstand)<(3.14*(PADAFSTAND*0.01)+muurGatAfstand))&&(ultrasoon_getDistance_L()<MAXWALLDISTANCE)&&(ultrasoon_getDistance_R()<MAXWALLDISTANCE)){
+                        com_doneCommand();
+                        operatingState = e_idle;
+                    }
+                    break;
+                }
+                case 2:{//tot bochtstralen en muurGatAfstand teruggereden en in pad
+                    navigatie_navigeerBocht(e_vooruit,0);
+                    if(((navigatie_afstandAfgelegd-startAfstand)<(3.14*(PADAFSTAND*0.01)+2*muurGatAfstand))&&(ultrasoon_getDistance_L()<MAXWALLDISTANCE)&&(ultrasoon_getDistance_R()<MAXWALLDISTANCE)){
+                        com_doneCommand();
+                        operatingState = e_idle;
+                    }
+                    break;
+                }
+                case 3:{//rij pad terug uit
+                    if(!(((navigatie_afstandAfgelegd-startAfstand)<(3.14*(PADAFSTAND*0.01)+2*muurGatAfstand))&&(ultrasoon_getDistance_L()<MAXWALLDISTANCE)&&(ultrasoon_getDistance_R()<MAXWALLDISTANCE))){
+                        navigatie_navigeerBocht(e_vooruit,0);
+                    }
+                    else if(!((ultrasoon_getDistance_L()>MAXWALLDISTANCE)&&(ultrasoon_getDistance_R()>MAXWALLDISTANCE))){
+                        navigatie_navigeerPad();
+                    }
+                    else{
+                        com_doneCommand();
+                        operatingState = e_idle;
+                    }
+                    break;
+                }
+                default:{
+                    com_doneCommand();
+                    operatingState = e_idle;
+                }
+                }
+            }
+
             break;
         }
         case e_volg:{

@@ -2,5 +2,6 @@
 #define NOODSTOP_H
 
 void noodstop_Setup();
+int noodstop_ingedrukt();
 
 #endif // NOODSTOP_H

@@ -20,7 +20,7 @@
 
 void knop_setup(){
     KNOPREGISTER |= (1 << STARTKNOP) | (1 << PLUSKNOP) | (1 << MINKNOP);
-    KNOPPORTS |= (1 << STARTKNOP) | (1 << PLUSKNOP) | (1 << MINKNOP);;
+    KNOPPORTS |= (1 << STARTKNOP) | (1 << PLUSKNOP) | (1 << MINKNOP);
 }
 
 

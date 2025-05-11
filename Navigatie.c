@@ -19,8 +19,9 @@
 
 
 float navigatie_speedGoal = 0;
-float navigatie_speedCurrent = 0;
+static float navigatie_speedCurrent = 0;
 float navigatie_acceleratie = 0;
+float navigatie_reverse = 0;
 static float navigatie_executieTijd = 0;
 
 float navigatie_afstandAfgelegd = 0;
@@ -28,7 +29,7 @@ float navigatie_afstandAfgelegd = 0;
 void navigatie_setup(){
     navigatie_speedGoal = 0;
     navigatie_speedCurrent = 0;
-    navigatie_acceleratie = 0;
+    navigatie_acceleratie = MAX_ACCELERATIE;
     navigatie_afstandAfgelegd = 0;
     navigatie_executieTijd = time;
 }
@@ -37,6 +38,7 @@ void navigatie_setup(){
 void stopAGV() {
     stepperMotor1_setSpeed(0);
     stepperMotor2_setSpeed(0);
+    navigatie_setSpeed(0);
     navigatie_speedCurrent = 0;
 }
 
@@ -62,9 +64,17 @@ void navigatie_navigeerBocht(t_richting f_draaiRichting, int f_radiusCm){
     navigatie_afstandAfgelegd += lastRealSpeed*(time-navigatie_executieTijd);
 
     //bereken snelheid
-    navigatie_speedCurrent += navigatie_acceleratie*(time-navigatie_executieTijd);
-    if(navigatie_speedCurrent>navigatie_speedGoal){
-        navigatie_speedCurrent = navigatie_speedGoal;
+    if(navigatie_speedCurrent<navigatie_speedGoal){
+        navigatie_speedCurrent += navigatie_acceleratie*(time-navigatie_executieTijd);
+        if(navigatie_speedCurrent>navigatie_speedGoal){
+            navigatie_speedCurrent = navigatie_speedGoal;
+        }
+    }
+    else if(navigatie_speedCurrent>navigatie_speedGoal){
+        navigatie_speedCurrent -= navigatie_acceleratie*(time-navigatie_executieTijd);
+        if(navigatie_speedCurrent<0){
+            navigatie_speedCurrent = 0;
+        }
     }
     navigatie_executieTijd = time;
 
@@ -75,20 +85,20 @@ void navigatie_navigeerBocht(t_richting f_draaiRichting, int f_radiusCm){
 
     switch(f_draaiRichting){
     case e_links:{
-        stepperMotor1_setSpeed(MOTORCONSTANT*((2*f_radiusCm-AGV_WIDTH)/(2*f_radiusCm+AGV_WIDTH))*navigatie_speedCurrent);
-        stepperMotor2_setSpeed(MOTORCONSTANT*navigatie_speedCurrent);
+        stepperMotor1_setSpeed(MOTORCONSTANT*((2*f_radiusCm-AGV_WIDTH)/(2*f_radiusCm+AGV_WIDTH))*navigatie_speedCurrent*((navigatie_reverse)?-1:1));
+        stepperMotor2_setSpeed(MOTORCONSTANT*navigatie_speedCurrent*((navigatie_reverse)?-1:1));
         lastRealSpeed = ((2*f_radiusCm)/(2*f_radiusCm+AGV_WIDTH))*navigatie_speedCurrent;
         break;
     }
     case e_rechts:{
-        stepperMotor1_setSpeed(MOTORCONSTANT*navigatie_speedCurrent);
-        stepperMotor2_setSpeed(MOTORCONSTANT*(((2*f_radiusCm-AGV_WIDTH)/(2*f_radiusCm+AGV_WIDTH))*navigatie_speedCurrent));
+        stepperMotor1_setSpeed(MOTORCONSTANT*navigatie_speedCurrent*((navigatie_reverse)?-1:1));
+        stepperMotor2_setSpeed(MOTORCONSTANT*(((2*f_radiusCm-AGV_WIDTH)/(2*f_radiusCm+AGV_WIDTH))*navigatie_speedCurrent)*((navigatie_reverse)?-1:1));
         lastRealSpeed = ((2*f_radiusCm)/(2*f_radiusCm+AGV_WIDTH))*navigatie_speedCurrent;
         break;
     }
     case e_vooruit:{
-        stepperMotor1_setSpeed(MOTORCONSTANT*navigatie_speedCurrent);
-        stepperMotor2_setSpeed(MOTORCONSTANT*navigatie_speedCurrent);
+        stepperMotor1_setSpeed(MOTORCONSTANT*navigatie_speedCurrent*((navigatie_reverse)?-1:1));
+        stepperMotor2_setSpeed(MOTORCONSTANT*navigatie_speedCurrent*((navigatie_reverse)?-1:1));
         lastRealSpeed = navigatie_speedCurrent;
         break;
     }
@@ -104,9 +114,9 @@ void navigatie_navigeerBocht(t_richting f_draaiRichting, int f_radiusCm){
 
 
 void navigatie_setSpeed(float f_speed){
-    navigatie_speedGoal = (f_speed<MAX_SPEED)?f_speed:MAX_SPEED;
+    navigatie_speedGoal = (f_speed<MAX_SPEED)?((f_speed<0)?0:f_speed):MAX_SPEED;
 }
 
 void navigatie_setAcceleratie(float f_Acceleratie){
-    navigatie_acceleratie = (f_Acceleratie<MAX_ACCELERATIE)?f_Acceleratie:MAX_ACCELERATIE;
+    navigatie_acceleratie = (f_Acceleratie<MAX_ACCELERATIE)?((f_Acceleratie<0)?0:f_Acceleratie):MAX_ACCELERATIE;
 }

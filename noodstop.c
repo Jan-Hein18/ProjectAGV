@@ -1,8 +1,11 @@
 #include "noodstop.h"
 
-#include "util/delay.h"
-#include "avr/io.h"
-#include "avr/interrupt.h"
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include "clock.h"
+
+#define DEBOUNCETIME_MS 20
+#define DEBOUNCETIME_S (DEBOUNCETIME_MS*0.001)
 
 #define noodstop_DDR    DDRB
 #define noodstop_PORT   PORTB
@@ -24,18 +27,27 @@ void noodstop_Setup(){
     sei();
 }
 
-
-ISR(INT2_vect){
-    //run once when e-stop active
-    operatingState = e_eStop;
-
-    _delay_ms(20);
-    if(noodstop_PIN&noodstop_BIT){//run continuous while e-stop active
-        display_string("STOP");
+int noodstop_ingedrukt(){
+    static int knopIngedrukt = 0;
+    static float knopTijd = 0;
+    if(knopTijd>time){
+        knopTijd = 0;
     }
 
+    if((!(noodstop_PIN&noodstop_BIT))&&(!knopIngedrukt)&&((knopTijd+DEBOUNCETIME_S)<time)){
+        knopIngedrukt = 1;
+        knopTijd = time;
+    }
+    else if((noodstop_PIN&noodstop_BIT)&&(knopIngedrukt)&&((knopTijd+DEBOUNCETIME_S)<time)){
+        knopIngedrukt = 0;
+        knopTijd = time;
+    }
 
-    //run once when e-stop deactivated
+    return knopIngedrukt;
+}
 
+
+ISR(INT2_vect){
+    operatingState = e_eStop;
 }
 
