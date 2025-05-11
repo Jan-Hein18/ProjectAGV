@@ -78,6 +78,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="clock.h" />
+		<Unit filename="com_agv.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="com_agv.h" />
 		<Unit filename="fuse.c">
 			<Option compilerVar="CC" />
 		</Unit>
