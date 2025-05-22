@@ -11,14 +11,14 @@
 #define MAXWALLDISTANCE 15
 
 #define PADAFSTAND 36
-#define BOCHTAANTAL 1
 
-enum enum_richting{e_links,e_rechts, e_vooruit, e_blockblock};
+enum enum_richting{e_links = 0x01,e_rechts = 0x02, e_vooruit, e_achteruit, e_blockblockL, e_blockblockR};
 typedef enum enum_richting t_richting;
 
-t_richting bochten[BOCHTAANTAL] = {e_rechts};//, e_links, e_rechts};
+#define ROUTELENGTE 4
+const t_richting route[ROUTELENGTE] = {e_vooruit, e_rechts, e_vooruit, e_links};
 
-enum enum_operatingState{e_eStop, e_reset, e_idle, e_pad, e_bocht, e_end};
+enum enum_operatingState{e_eStop, e_reset, e_idle, e_route, e_end};
 typedef enum enum_operatingState t_operatingState;
 t_operatingState operatingState = e_reset;
 
@@ -100,35 +100,91 @@ int main(void){
             display_string("idle");
 
             if(knop_ingedrukt(e_startKnop)){
-                operatingState = e_pad;
+                operatingState = e_route;
             }
             break;
         }
-        case e_pad:{
-            //wat te doen in pad
-
-
-
-            //eindconditie om over te gaan naar bocht
-
-            break;
-        }
-        case e_bocht:{
-            static int bochtNr = 0;
-            if((lastOperatingState==e_pad)){//runt een keer wanneer status veranderd naar bocht vanuit pad
-                bochtNr++;
-
-                if(bochtNr>BOCHTAANTAL){
-                    bochtNr = 0;
-                    operatingState = e_end;//stop na laatste bocht
+        case e_route:{
+            //manage the current part of the route
+            static int currentSection = 0;
+            static t_richting currentDir = route[0];
+            static int nextSection = 1;
+            static int newSection = 0;
+            newSection = 0;
+            if(nextSection){
+                currentSection++;
+                if((currentSection++)>=ROUTELENGTE){//pad klaar
+                    operatingState = e_end;
+                    currentSection = 0;
+                    nextSection = 1;
                     break;
                 }
+                currentDir = route[currentSection];
+                newSection = 1;
             }
 
 
+            switch(currentDir){
+            case e_vooruit:{
+                if(newSection){
+                    while(!com_rechtCommand(0xff,0xff,0xff));
+                }
 
-            if(com_agvDone){//klaar met bocht
-                operatingState = e_pad;
+                if(com_agvDone){
+                    nextSection = 1;
+                }
+                break;
+            }
+            case e_achteruit:{
+                if(newSection){
+                    while(!com_rechtCommand(0x00,0xff,0xff));
+                }
+
+                if(com_agvDone){
+                    nextSection = 1;
+                }
+                break;
+            }
+            case e_links:{
+                if(newSection){
+                    while(!com_bochtCommand(e_links,0xff,0xff));
+                }
+
+                if(com_agvDone){
+                    nextSection = 1;
+                }
+                break;
+            }
+            case e_rechts:{
+                if(newSection){
+                    while(!com_bochtCommand(e_rechts,0xff,0xff));
+                }
+
+                if(com_agvDone){
+                    nextSection = 1;
+                }
+                break;
+            }
+            case e_blockblockL:{
+                if(newSection){
+                    while(!com_blokBlokCommand(e_links,0xff,0xff));
+                }
+
+                if(com_agvDone){
+                    nextSection = 1;
+                }
+                break;
+            }
+            case e_blockblockR:{
+                if(newSection){
+                    while(!com_blokBlokCommand(e_rechts,0xff,0xff));
+                }
+
+                if(com_agvDone){
+                    nextSection = 1;
+                }
+                break;
+            }
             }
             break;
         }

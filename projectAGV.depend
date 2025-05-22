@@ -25,7 +25,7 @@
 	<avr/io.h>
 	"clock.h"
 
-1747833131 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\knoppen.c
+1747853428 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\knoppen.c
 	"Knoppen.h"
 	<avr/io.h>
 	"clock.h"
@@ -48,9 +48,9 @@
 1746121522 d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\ultrasoon.h
 	<util/delay.h>
 
-1747833131 d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\noodstop.h
+1747853428 d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\noodstop.h
 
-1747833131 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\noodstop.c
+1747853428 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\noodstop.c
 	"noodstop.h"
 	"util/delay.h"
 	"avr/io.h"
@@ -91,4 +91,11 @@
 	"IRSensor.h"
 
 1746200538 d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\pakketten.h
+
+1747853428 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\com_module.c
+	"com_module.h"
+	<avr/io.h>
+	<avr/interrupt.h>
+
+1747853428 d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\com_module.h
 
