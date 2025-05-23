@@ -62,14 +62,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="Knoppen.h" />
-		<Unit filename="Navigatie.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="Navigatie.h" />
-		<Unit filename="StepperMotor.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="StepperMotor.h" />
 		<Unit filename="Ultrasoon.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -78,16 +70,15 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="clock.h" />
+		<Unit filename="com_module.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="com_module.h" />
 		<Unit filename="fuse.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="main_old.c">
-			<Option compilerVar="CC" />
-			<Option compile="0" />
-			<Option link="0" />
 		</Unit>
 		<Unit filename="noodstop.c">
 			<Option compilerVar="CC" />
