@@ -29,10 +29,10 @@ ISR(INT2_vect){
     //run once when e-stop active
     operatingState = e_eStop;
 
-    _delay_ms(20);//account for bouncing before leaving interrupt
-    /*while(noodstop_PIN&noodstop_BIT){//run continuous while e-stop active
+    _delay_ms(20);
+    if(noodstop_PIN&noodstop_BIT){//run continuous while e-stop active
         display_string("STOP");
-    }*/
+    }
 
 
     //run once when e-stop deactivated

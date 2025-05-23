@@ -25,7 +25,7 @@
 	<avr/io.h>
 	"clock.h"
 
-1747833131 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\knoppen.c
+1746614030 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\knoppen.c
 	"Knoppen.h"
 	<avr/io.h>
 	"clock.h"
@@ -48,9 +48,9 @@
 1746121522 d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\ultrasoon.h
 	<util/delay.h>
 
-1747833131 d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\noodstop.h
+1743419552 d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\noodstop.h
 
-1747833131 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\noodstop.c
+1746210509 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\noodstop.c
 	"noodstop.h"
 	"util/delay.h"
 	"avr/io.h"
@@ -66,7 +66,7 @@
 	"stepperMotor.h"
 	"avr/io.h"
 
-1747833131 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\navigatie.c
+1746624533 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\navigatie.c
 	"Navigatie.h"
 	<avr/io.h>
 	"StepperMotor.h"
@@ -74,7 +74,7 @@
 	"clock.h"
 	"Display1.h"
 
-1747833131 d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\navigatie.h
+1746622303 d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\navigatie.h
 
 1746200351 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\main_new.c
 	"Display1.h"

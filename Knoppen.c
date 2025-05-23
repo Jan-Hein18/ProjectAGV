@@ -24,7 +24,6 @@ void knop_setup(){
 }
 
 
-
 //return knopstaat en houdt rekening met debouncing
 int knop_ingedrukt(t_knoppen knop){
     switch(knop){
