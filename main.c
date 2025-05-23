@@ -16,7 +16,7 @@ enum enum_richting{e_links = 0x01,e_rechts = 0x02, e_vooruit, e_achteruit, e_blo
 typedef enum enum_richting t_richting;
 
 #define ROUTELENGTE 4
-const t_richting route[ROUTELENGTE] = {e_vooruit, e_rechts, e_vooruit, e_links};
+const t_richting route[ROUTELENGTE] = {e_vooruit, e_rechts, e_vooruit};
 
 enum enum_operatingState{e_eStop, e_reset, e_idle, e_route, e_end};
 typedef enum enum_operatingState t_operatingState;
@@ -126,8 +126,23 @@ int main(void){
 
             switch(currentDir){
             case e_vooruit:{
+                static int dirIteration = 0; //the amount of times this direction has been started
+                static float dirStartTime = 0;
                 if(newSection){
+                    dirIteration++;
+                    dirStartTime = time;
                     while(!com_rechtCommand(0xff,0xff,0xff));
+                }
+
+
+
+
+
+                //stop na 2 seconden bij 2e rechte stuk
+                const float driveTimeToStop = 1;
+                if((dirIteration==2)&&((dirStartTime+1)>time)){
+                    while(!com_rechtCommand(0x7f,0,0xff));
+                    nextSection = 1;
                 }
 
                 if(com_agvDone){
@@ -136,7 +151,11 @@ int main(void){
                 break;
             }
             case e_achteruit:{
+                static int dirIteration = 0;
+                static float dirStartTime = 0;
                 if(newSection){
+                    dirIteration++;
+                    dirStartTime = time;
                     while(!com_rechtCommand(0x00,0xff,0xff));
                 }
 
@@ -146,7 +165,11 @@ int main(void){
                 break;
             }
             case e_links:{
+                static int dirIteration = 0;
+                static float dirStartTime = 0;
                 if(newSection){
+                    dirIteration++;
+                    dirStartTime = time;
                     while(!com_bochtCommand(e_links,0xff,0xff));
                 }
 
@@ -156,7 +179,11 @@ int main(void){
                 break;
             }
             case e_rechts:{
+                static int dirIteration = 0;
+                static float dirStartTime = 0;
                 if(newSection){
+                    dirIteration++;
+                    dirStartTime = time;
                     while(!com_bochtCommand(e_rechts,0xff,0xff));
                 }
 
@@ -166,7 +193,11 @@ int main(void){
                 break;
             }
             case e_blockblockL:{
+                static int dirIteration = 0;
+                static float dirStartTime = 0;
                 if(newSection){
+                    dirIteration++;
+                    dirStartTime = time;
                     while(!com_blokBlokCommand(e_links,0xff,0xff));
                 }
 
@@ -176,7 +207,11 @@ int main(void){
                 break;
             }
             case e_blockblockR:{
+                static int dirIteration = 0;
+                static float dirStartTime = 0;
                 if(newSection){
+                    dirIteration++;
+                    dirStartTime = time;
                     while(!com_blokBlokCommand(e_rechts,0xff,0xff));
                 }
 
