@@ -1,11 +1,11 @@
 #include "Display1.h"
-#include "Ultrasoon.h"
 #include "Knoppen.h"
 #include "IRSensor.h"
 #include "noodstop.h"
 #include "clock.h"
 #include "pakketten.h"
 #include "com_module.h"
+#include "metaalDetector.h"
 
 
 #define MAXWALLDISTANCE 15
@@ -63,12 +63,11 @@ int main(void){
                 //systeem
                 initClock();
 
-                //navigatie
-                ultrasoon_setup();
-
                 //tellen
                 initSensoren();
-                aantalPakketten = 0;
+                metaaldetector_setup();
+                aantalPakkettenMetaal = 0;
+                aantalPakkettenLeeg = 0;
 
                 //ui
                 _7segment_setup();
@@ -139,11 +138,20 @@ int main(void){
 
 
                 //stop na 2 seconden bij 2e rechte stuk
-                const float driveTimeToStop = 1;
-                if((dirIteration==2)&&((dirStartTime+1)>time)){
-                    while(!com_rechtCommand(0x7f,0,0xff));
-                    nextSection = 1;
+                switch(dirIteration){
+                case 2:{
+                    const float driveTimeToStop = 1;
+                    if((dirStartTime+driveTimeToStop)>time){
+                        while(!com_rechtCommand(0x7f,0,0xff));//stop
+                        nextSection = 1;
+                    }
+                    break;
                 }
+                default:{
+                    //tel pakketten
+                }
+                }
+
 
                 if(com_agvDone){
                     nextSection = 1;

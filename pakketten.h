@@ -1,7 +1,8 @@
 #ifndef PAKKETTEN_INCLUDED
 #define PAKKETTEN_INCLUDED
 
-extern unsigned int aantalPakketten;
+extern unsigned int aantalPakkettenMetaal;
+extern unsigned int aantalPakkettenLeeg;
 
 void telPakketten();
 

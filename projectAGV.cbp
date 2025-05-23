@@ -62,10 +62,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="Knoppen.h" />
-		<Unit filename="Ultrasoon.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="Ultrasoon.h" />
 		<Unit filename="clock.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -80,6 +76,10 @@
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="metaalDetector.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="metaalDetector.h" />
 		<Unit filename="noodstop.c">
 			<Option compilerVar="CC" />
 		</Unit>

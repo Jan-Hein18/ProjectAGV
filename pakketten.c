@@ -1,32 +1,18 @@
 #include "pakketten.h"
-#include "IRSensor.h"
+#include "metaalDetector.h"
 
-unsigned int aantalPakketten = 0;
+unsigned int aantalPakkettenTotaal = 0;
+unsigned int aantalPakkettenMetaal = 0;
+unsigned int aantalPakkettenLeeg = 0;
 
 
-void telPakketten(){
-    {//links
-        static int IRActief = 0;
-        if(!IRActief&&IRSensor_links()){
-            IRActief = 1;
-            aantalPakketten++;
-        }
-        else if(IRActief&&!IRSensor_links()){
-            IRActief = 0;
-        }
-
+void telPakket_L(){
+    if(metaaldetector_links()){
+        aantalPakkettenMetaal++;
     }
-    {//rechts
-        static int IRActief = 0;
-        if(!IRActief&&IRSensor_rechts()){
-            IRActief = 1;
-            aantalPakketten++;
-        }
-        else if(IRActief&&!IRSensor_rechts()){
-            IRActief = 0;
-        }
-
+    else{
+        aantalPakkettenLeeg++;
     }
 
-
+    aantalPakkettenTotaal++;
 }
