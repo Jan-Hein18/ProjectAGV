@@ -16,3 +16,14 @@ void telPakket_L(){
 
     aantalPakkettenTotaal++;
 }
+
+void telPakket_R(){
+    if(metaaldetector_rechts()){
+        aantalPakkettenMetaal++;
+    }
+    else{
+        aantalPakkettenLeeg++;
+    }
+
+    aantalPakkettenTotaal++;
+}

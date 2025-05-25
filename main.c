@@ -7,8 +7,12 @@
 #include "com_module.h"
 #include "metaalDetector.h"
 
-
+#define DETECTCYCLERESETTIME 0.5 //min duration between end of detect cycle and a new cycle
+#define STOPTIMEATPACKAGE 1 //how long to stop at a package
 #define MAXWALLDISTANCE 15
+
+#define DRIVESPEED 0.125 //max 2
+#define DRIVESPEEDSCALED DRIVESPEED*0xff/2 //scaled for use in command
 
 #define PADAFSTAND 36
 
@@ -27,7 +31,16 @@ int main(void){
     t_operatingState previousOperatingSate = -1; //operating state before last change
     t_operatingState currentOperatingState = -1; //operating state at start of cycle, do not change during cycle
 
+    float lastCycleDuration = 0;
+    float cycleStartTime = time;
+
+    int resetRoute = 1;
+
     while(1) {
+        //calculate cycleTimes
+        lastCycleDuration = time-cycleStartTime;
+        cycleStartTime = time;
+
         //buffer the previous operatingState when operatingState is changed
         currentOperatingState = operatingState;
         if(lastOperatingState!=operatingState){
@@ -39,7 +52,7 @@ int main(void){
         case e_eStop:{
             static int continueOperation = 0;
 
-            //stopAGV();
+            while(!com_rechtCommand(0xff/2,0,0xff));//stop
 
             if(((int)time*10)%5){
                 display_string(continueOperation?"cont":"rset");
@@ -62,6 +75,7 @@ int main(void){
                 //--INITIALISATIE--
                 //systeem
                 initClock();
+                cycleStartTime = 0;
 
                 //tellen
                 initSensoren();
@@ -76,10 +90,12 @@ int main(void){
                 //mi
                 com_setup();
 
+                //reset operatingStates
+                resetRoute = 1;
 
 
                 //--SET NEUTRAL STATE--
-                //stopAGV();
+                while(!com_rechtCommand(0xff/2,0,0xff));//stop
                 _7segment_write(0,0);
             }
 
@@ -94,7 +110,9 @@ int main(void){
             break;
         }
         case e_idle:{
-            //stopAGV();
+            if(lastOperatingState!=e_idle){
+                while(!com_rechtCommand(0xff/2,0,0xff));//stop
+            }
 
             display_string("idle");
 
@@ -109,6 +127,13 @@ int main(void){
             static t_richting currentDir = route[0];
             static int nextSection = 1;
             static int newSection = 0;
+
+            if(resetRoute){
+                currentSection = 0;
+                currentDir = route[0];
+                nextSection = 1;
+            }
+
             newSection = 0;
             if(nextSection){
                 currentSection++;
@@ -130,25 +155,100 @@ int main(void){
                 if(newSection){
                     dirIteration++;
                     dirStartTime = time;
-                    while(!com_rechtCommand(0xff,0xff,0xff));
+                    while(!com_rechtCommand(0xff,DRIVESPEEDSCALED,0xff));
                 }
 
 
 
 
 
-                //stop na 2 seconden bij 2e rechte stuk
+                //stop na 1 seconde bij 2e rechte stuk
                 switch(dirIteration){
                 case 2:{
                     const float driveTimeToStop = 1;
                     if((dirStartTime+driveTimeToStop)>time){
-                        while(!com_rechtCommand(0x7f,0,0xff));//stop
+                        while(!com_rechtCommand(0xff/2,0,0xff));//stop
                         nextSection = 1;
                     }
                     break;
                 }
                 default:{
                     //tel pakketten
+                    const float driveTimeToStop = 0.1;
+                    static int detect_L = 0; //is a detection cycle active
+                    static int detect_R = 0;
+                    static float detectTimeL = 0;//time when a package was sensed
+                    static float detectTimeR = 0;
+                    static int stoppedL = 0;
+                    static int stoppedR = 0;
+
+
+                    if((!detect_L)&&IRSensor_links()){//start detect cycle
+                            detectTimeL = time;
+                            detect_L = 1;
+                    }
+
+                    if((!detect_R)&&IRSensor_rechts()){//start detect cycle
+                            detectTimeR = time;
+                            detect_R = 1;
+                    }
+
+
+
+                    if(detect_L){
+                        if(stoppedR){//shift cycle start to compensate for stopping by other sensor
+                            detectTimeL+=lastCycleDuration;
+                        }
+                        else{
+                            if(time<(detectTimeL+driveTimeToStop)){
+                                //do nothing
+                            }
+                            else if(time<(detectTimeL+driveTimeToStop+1)){//stop for 1 second
+                                if(!stoppedL){
+                                    while(!com_rechtCommand(0xff/2,0,0xff));//stop
+                                    stoppedL = 1;
+                                }
+                            }
+                            else if(time<(detectTimeL+driveTimeToStop+1+DETECTCYCLERESETTIME)){//continue
+                                if(stoppedL){
+                                    while(!com_rechtCommand(0xff,DRIVESPEEDSCALED,0xff));
+                                    stoppedL = 0;
+                                }
+                            }
+                            else{
+                                detect_L = 0;
+                            }
+                        }
+
+                    }
+
+                    if(detect_R){
+                        if(stoppedL){//shift cycle start to compensate for stopping by other sensor
+                            detectTimeR+=lastCycleDuration;
+                        }
+                        else{
+                            if(time<(detectTimeR+driveTimeToStop)){
+                                //do nothing
+                            }
+                            else if(time<(detectTimeR+driveTimeToStop+1)){//stop for 1 second
+                                if(!stoppedR){
+                                    while(!com_rechtCommand(0xff/2,0,0xff));//stop
+                                    stoppedR = 1;
+                                }
+                            }
+                            else if(time<(detectTimeR+driveTimeToStop+1+DETECTCYCLERESETTIME)){//continue
+                                if(stoppedR){
+                                    while(!com_rechtCommand(0xff,DRIVESPEEDSCALED,0xff));
+                                    stoppedR = 0;
+                                }
+                            }
+                            else{
+                                detect_R = 0;
+                            }
+                        }
+
+                    }
+
                 }
                 }
 
@@ -164,7 +264,7 @@ int main(void){
                 if(newSection){
                     dirIteration++;
                     dirStartTime = time;
-                    while(!com_rechtCommand(0x00,0xff,0xff));
+                    while(!com_rechtCommand(0x00,DRIVESPEEDSCALED,0xff));
                 }
 
                 if(com_agvDone){
@@ -178,7 +278,7 @@ int main(void){
                 if(newSection){
                     dirIteration++;
                     dirStartTime = time;
-                    while(!com_bochtCommand(e_links,0xff,0xff));
+                    while(!com_bochtCommand(e_links,DRIVESPEEDSCALED,0xff));
                 }
 
                 if(com_agvDone){
@@ -192,7 +292,7 @@ int main(void){
                 if(newSection){
                     dirIteration++;
                     dirStartTime = time;
-                    while(!com_bochtCommand(e_rechts,0xff,0xff));
+                    while(!com_bochtCommand(e_rechts,DRIVESPEEDSCALED,0xff));
                 }
 
                 if(com_agvDone){
@@ -206,7 +306,7 @@ int main(void){
                 if(newSection){
                     dirIteration++;
                     dirStartTime = time;
-                    while(!com_blokBlokCommand(e_links,0xff,0xff));
+                    while(!com_blokBlokCommand(e_links,DRIVESPEEDSCALED,0xff));
                 }
 
                 if(com_agvDone){
@@ -220,7 +320,7 @@ int main(void){
                 if(newSection){
                     dirIteration++;
                     dirStartTime = time;
-                    while(!com_blokBlokCommand(e_rechts,0xff,0xff));
+                    while(!com_blokBlokCommand(e_rechts,DRIVESPEEDSCALED,0xff));
                 }
 
                 if(com_agvDone){
@@ -232,9 +332,11 @@ int main(void){
             break;
         }
         case e_end:{
+            if(lastOperatingState!=e_end){
+                while(!com_rechtCommand(0xff/2,0,0xff));//stop
+            }
+
             display_string("end ");
-
-
 
             if(knop_ingedrukt(e_startKnop)){
                 operatingState = e_reset;

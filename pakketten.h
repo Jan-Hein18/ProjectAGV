@@ -4,6 +4,7 @@
 extern unsigned int aantalPakkettenMetaal;
 extern unsigned int aantalPakkettenLeeg;
 
-void telPakketten();
+void telPakket_L();
+void telPakket_R();
 
 #endif // PAKKETTEN_INCLUDED
