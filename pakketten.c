@@ -16,17 +16,6 @@ void telPakketten(){
         }
 
     }
-    {//rechts
-        static int IRActief = 0;
-        if(!IRActief&&IRSensor_rechts()){
-            IRActief = 1;
-            aantalPakketten++;
-        }
-        else if(IRActief&&!IRSensor_rechts()){
-            IRActief = 0;
-        }
-
-    }
 
 
 }

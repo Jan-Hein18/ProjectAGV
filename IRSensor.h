@@ -4,6 +4,6 @@
 void initSensoren();
 
 int IRSensor_links();
-int IRSensor_rechts();
+
 
 #endif //IRSENSOR_H

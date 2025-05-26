@@ -52,9 +52,8 @@ int main(void){
             if(knop_ingedrukt(e_startKnop)){
                 operatingState = continueOperation?previousOperatingSate:e_reset;
             }
-            else if(knop_ingedrukt(e_plusKnop)||knop_ingedrukt(e_minKnop)){
-                continueOperation = !continueOperation;
-            }
+
+
             break;
         }
         case e_reset:{//reset waardes waar nodig en runt setup code
@@ -88,7 +87,7 @@ int main(void){
             display_string("rset");
 
             //wacht tot geen knoppen ingedrukt
-            if((!knop_ingedrukt(e_startKnop))&&(!knop_ingedrukt(e_plusKnop))&&(!knop_ingedrukt(e_minKnop))){
+            if((!knop_ingedrukt(e_startKnop))){
                 operatingState = e_idle;
             }
 

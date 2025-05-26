@@ -1,7 +1,7 @@
 #ifndef KNOPPEN_H
 #define KNOPPEN_H
 
-enum enum_knoppen{e_startKnop, e_plusKnop, e_minKnop};
+enum enum_knoppen{e_startKnop};
 typedef enum enum_knoppen t_knoppen;
 
 void knop_setup();
