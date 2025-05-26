@@ -73,6 +73,10 @@
 		<Unit filename="fuse.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="lampjes.c">
+			<Option compilerVar="CC" />
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
