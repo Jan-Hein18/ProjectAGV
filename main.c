@@ -19,7 +19,7 @@
 enum enum_richting{e_links = 0x01,e_rechts = 0x02, e_vooruit, e_achteruit, e_blockblockL, e_blockblockR};
 typedef enum enum_richting t_richting;
 
-#define ROUTELENGTE 4
+#define ROUTELENGTE 3
 const t_richting route[ROUTELENGTE] = {e_vooruit, e_rechts, e_vooruit};
 
 enum enum_operatingState{e_eStop, e_reset, e_idle, e_route, e_end};
@@ -125,35 +125,35 @@ int main(void){
             //manage the current part of the route
             static int currentSection = 0;
             static t_richting currentDir = route[0];
-            static int nextSection = 1;
-            static int newSection = 0;
+            static int nextSection = 0;
+            static int newSection = 1;
+            newSection = 0;
 
             if(resetRoute){
                 currentSection = 0;
                 currentDir = route[0];
-                nextSection = 1;
+                nextSection = 0;
+                newSection = 1;
             }
 
-            newSection = 0;
             if(nextSection){
                 currentSection++;
-                if((currentSection++)>=ROUTELENGTE){//pad klaar
+                if(currentSection>=ROUTELENGTE){//pad klaar
                     operatingState = e_end;
-                    currentSection = 0;
-                    nextSection = 1;
+                    resetRoute = 1;
                     break;
                 }
                 currentDir = route[currentSection];
                 newSection = 1;
+                nextSection = 0;
             }
 
 
             switch(currentDir){
             case e_vooruit:{
-                static int dirIteration = 0; //the amount of times this direction has been started
                 static float dirStartTime = 0;
+
                 if(newSection){
-                    dirIteration++;
                     dirStartTime = time;
                     while(!com_rechtCommand(0xff,DRIVESPEEDSCALED,0xff));
                 }
@@ -162,11 +162,11 @@ int main(void){
 
 
 
-                //stop na 1 seconde bij 2e rechte stuk
-                switch(dirIteration){
+                //stop na 1 seconde bij 2e rechte stuk (stuk 2 van route)
+                switch(currentSection){
                 case 2:{
                     const float driveTimeToStop = 1;
-                    if((dirStartTime+driveTimeToStop)>time){
+                    if((dirStartTime+driveTimeToStop)<time){
                         while(!com_rechtCommand(0xff/2,0,0xff));//stop
                         nextSection = 1;
                     }
@@ -259,10 +259,8 @@ int main(void){
                 break;
             }
             case e_achteruit:{
-                static int dirIteration = 0;
                 static float dirStartTime = 0;
                 if(newSection){
-                    dirIteration++;
                     dirStartTime = time;
                     while(!com_rechtCommand(0x00,DRIVESPEEDSCALED,0xff));
                 }
@@ -273,10 +271,8 @@ int main(void){
                 break;
             }
             case e_links:{
-                static int dirIteration = 0;
                 static float dirStartTime = 0;
                 if(newSection){
-                    dirIteration++;
                     dirStartTime = time;
                     while(!com_bochtCommand(e_links,DRIVESPEEDSCALED,0xff));
                 }
@@ -287,10 +283,8 @@ int main(void){
                 break;
             }
             case e_rechts:{
-                static int dirIteration = 0;
                 static float dirStartTime = 0;
                 if(newSection){
-                    dirIteration++;
                     dirStartTime = time;
                     while(!com_bochtCommand(e_rechts,DRIVESPEEDSCALED,0xff));
                 }
@@ -301,10 +295,8 @@ int main(void){
                 break;
             }
             case e_blockblockL:{
-                static int dirIteration = 0;
                 static float dirStartTime = 0;
                 if(newSection){
-                    dirIteration++;
                     dirStartTime = time;
                     while(!com_blokBlokCommand(e_links,DRIVESPEEDSCALED,0xff));
                 }
@@ -315,10 +307,8 @@ int main(void){
                 break;
             }
             case e_blockblockR:{
-                static int dirIteration = 0;
                 static float dirStartTime = 0;
                 if(newSection){
-                    dirIteration++;
                     dirStartTime = time;
                     while(!com_blokBlokCommand(e_rechts,DRIVESPEEDSCALED,0xff));
                 }
@@ -329,6 +319,8 @@ int main(void){
                 break;
             }
             }
+
+            resetRoute = 0;
             break;
         }
         case e_end:{
