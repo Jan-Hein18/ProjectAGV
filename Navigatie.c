@@ -58,6 +58,36 @@ void navigatie_navigeerPad(){
     //navigatie_navigeerBocht(e_vooruit,0);
 }
 
+void navigatie_navigeerMuurL(float afstand){
+    float afstand_links = ultrasoon_getDistance_L();
+    float afstand_rechts = afstand+(afstand-afstand_links);
+
+    if(afstand_rechts > afstand_links+PAD_TURNDEADZONE){//draai naar rechts
+        navigatie_navigeerBocht(e_rechts,(1.0/(afstand_rechts-afstand_links))*TURNCONSTANT);
+    }
+    else if(afstand_links > afstand_rechts+PAD_TURNDEADZONE){//draai naar links
+        navigatie_navigeerBocht(e_links,(1.0/(afstand_links-afstand_rechts))*TURNCONSTANT);
+    }
+    else{
+        navigatie_navigeerBocht(e_vooruit,0);
+    }
+}
+
+void navigatie_navigeerMuurR(float afstand){
+    float afstand_rechts = ultrasoon_getDistance_R();
+    float afstand_links = afstand+(afstand-afstand_rechts);
+
+    if(afstand_rechts > afstand_links+PAD_TURNDEADZONE){//draai naar rechts
+        navigatie_navigeerBocht(e_rechts,(1.0/(afstand_rechts-afstand_links))*TURNCONSTANT);
+    }
+    else if(afstand_links > afstand_rechts+PAD_TURNDEADZONE){//draai naar links
+        navigatie_navigeerBocht(e_links,(1.0/(afstand_links-afstand_rechts))*TURNCONSTANT);
+    }
+    else{
+        navigatie_navigeerBocht(e_vooruit,0);
+    }
+}
+
 void navigatie_navigeerBocht(t_richting f_draaiRichting, int f_radiusCm){
     //update afstand
     static float lastRealSpeed = 0; //compenseer voor snelheid in bochten

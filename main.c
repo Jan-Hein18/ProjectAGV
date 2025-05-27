@@ -90,12 +90,31 @@ int main(void){
         case e_pad:{
             navigatie_reverse = com_command.arg<0x7F;
             navigatie_setSpeed(com_command.speed);
-            navigatie_navigeerPad();
 
 
+            int muurWeg = 0;
+            float muurAfstand = 0;
             if((ultrasoon_getDistance_L()>MAXWALLDISTANCE)&&(ultrasoon_getDistance_R()>MAXWALLDISTANCE)){
                 com_doneCommand();
                 operatingState = e_idle;
+            }
+            else if(ultrasoon_getDistance_L()>MAXWALLDISTANCE){
+                if(!muurWeg){
+                    muurWeg = 1;
+                    muurAfstand = ultrasoon_getDistance_R();
+                }
+                navigatie_navigeerMuurR(muurAfstand);
+            }
+            else if(ultrasoon_getDistance_R()>MAXWALLDISTANCE){
+                if(!muurWeg){
+                    muurWeg = 1;
+                    muurAfstand = ultrasoon_getDistance_L();
+                }
+                navigatie_navigeerMuurL(muurAfstand);
+            }
+            else{
+                muurWeg = 0;
+                navigatie_navigeerPad();
             }
             break;
         }

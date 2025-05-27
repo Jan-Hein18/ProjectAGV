@@ -12,6 +12,8 @@ extern float navigatie_reverse;
 void navigatie_setup();
 
 void navigatie_navigeerPad();
+void navigatie_navigeerMuurL(float afstand);
+void navigatie_navigeerMuurR(float afstand);
 void navigatie_navigeerBocht(t_richting f_draaiRichting, int f_radiusCm);
 void stopAGV();
 
