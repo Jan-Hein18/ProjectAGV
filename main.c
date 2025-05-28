@@ -62,8 +62,6 @@ int main(void){
                 //systeem
                 initClock();
 
-                //navigatie
-                ultrasoon_setup();
 
                 //tellen
                 initSensoren();

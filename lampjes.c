@@ -22,5 +22,12 @@ void lampjesToggle(void){
         geelAan = 0;
         LAMPPORT &= ~(1<<LAMPGEEL)
    }
-
+   if(knop_ingedrukt(e_limitSwitch) && groenAan==0){
+        groenAan = 1;
+        LAMPPORT |= (1<<LAMPGROEN);
+   }
+   if(!(knop_ingedrukt(e_limitSwitch)) && groenAan = 1){
+        groenAan = 0;
+        LAMPPORT &= ~(1<<LAMPGROEN);
+   }
 }

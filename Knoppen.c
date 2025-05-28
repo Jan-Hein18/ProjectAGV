@@ -5,11 +5,12 @@
 #include "clock.h"
 
 
-#define KNOPREGISTER    DDRF
-#define KNOPPINS        PINF
-#define KNOPPORTS       PORTF
+#define KNOPREGISTER    DDRG
+#define KNOPPINS        PING
+#define KNOPPORTS       PORTG
 
-#define STARTKNOP   PF0
+#define STARTKNOP   PG1
+#define LIMITSIWTCH PG0
 
 #define DEBOUNCETIME_MS 10
 #define DEBOUNCETIME_S (DEBOUNCETIME_MS*0.001)
@@ -17,8 +18,8 @@
 
 
 void knop_setup(){
-    KNOPREGISTER |= (1 << STARTKNOP);
-    KNOPPORTS |= (1 << STARTKNOP);
+    KNOPREGISTER |= (1 << STARTKNOP) | (1<<LIMITSIWTCH);
+    KNOPPORTS |= (1 << STARTKNOP) | (1<<LIMITSIWTCH);
 }
 
 
@@ -38,6 +39,24 @@ int knop_ingedrukt(t_knoppen knop){
                 knopTijd = time;
             }
             else if((KNOPPINS&(1<<STARTKNOP))&&(knopIngedrukt)&&((knopTijd+DEBOUNCETIME_S)<time)){
+                knopIngedrukt = 0;
+                knopTijd = time;
+            }
+
+            return knopIngedrukt;
+        }
+        case e_limitSwitch:{
+            static int knopIngedrukt = 0;
+            static float knopTijd = 0;
+            if(knopTijd>time){
+                knopTijd = 0;
+            }
+
+            if((!(KNOPPINS&(1<<LIMITSIWTCH)))&&(!knopIngedrukt)&&((knopTijd+DEBOUNCETIME_S)<time)){
+                knopIngedrukt = 1;
+                knopTijd = time;
+            }
+            else if((KNOPPINS&(1<<LIMITSIWTCH))&&(knopIngedrukt)&&((knopTijd+DEBOUNCETIME_S)<time)){
                 knopIngedrukt = 0;
                 knopTijd = time;
             }
