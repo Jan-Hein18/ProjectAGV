@@ -10,8 +10,8 @@
 #define KNOPPORTS       PORTF
 
 #define STARTKNOP   PF0
-#define PLUSKNOP    PF2
-#define MINKNOP     PF1
+#define PLUSKNOP    PF1
+#define MINKNOP     PF2
 
 #define DEBOUNCETIME_MS 10
 #define DEBOUNCETIME_S (DEBOUNCETIME_MS*0.001)

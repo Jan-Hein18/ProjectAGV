@@ -1979,7 +1979,7 @@ int knop_ingedrukt(t_knoppen knop){
 
 00000a50 <.L14>:
             if((!(KNOPPINS&(1<<PLUSKNOP)))&&(!knopIngedrukt)&&((knopTijd+DEBOUNCETIME_S)<time)){
-     a50:	7a 99       	sbic	0x0f, 2	; 15
+     a50:	79 99       	sbic	0x0f, 1	; 15
      a52:	43 c0       	rjmp	.+134    	; 0xada <.L16>
 
 00000a54 <.Loc.45>:
@@ -2049,7 +2049,7 @@ int knop_ingedrukt(t_knoppen knop){
 
 00000ada <.L16>:
             else if((KNOPPINS&(1<<PLUSKNOP))&&(knopIngedrukt)&&((knopTijd+DEBOUNCETIME_S)<time)){
-     ada:	7a 9b       	sbis	0x0f, 2	; 15
+     ada:	79 9b       	sbis	0x0f, 1	; 15
      adc:	07 c0       	rjmp	.+14     	; 0xaec <.L20>
 
 00000ade <.Loc.55>:
@@ -2094,7 +2094,7 @@ int knop_ingedrukt(t_knoppen knop){
 
 00000b2e <.L22>:
             if((!(KNOPPINS&(1<<MINKNOP)))&&(!knopIngedrukt)&&((knopTijd+DEBOUNCETIME_S)<time)){
-     b2e:	79 99       	sbic	0x0f, 1	; 15
+     b2e:	7a 99       	sbic	0x0f, 2	; 15
      b30:	43 c0       	rjmp	.+134    	; 0xbb8 <.L24>
 
 00000b32 <.Loc.69>:
@@ -2164,7 +2164,7 @@ int knop_ingedrukt(t_knoppen knop){
 
 00000bb8 <.L24>:
             else if((KNOPPINS&(1<<MINKNOP))&&(knopIngedrukt)&&((knopTijd+DEBOUNCETIME_S)<time)){
-     bb8:	79 9b       	sbis	0x0f, 1	; 15
+     bb8:	7a 9b       	sbis	0x0f, 2	; 15
      bba:	07 c0       	rjmp	.+14     	; 0xbca <.L28>
 
 00000bbc <.Loc.79>:
@@ -2248,7 +2248,7 @@ int knop_ingedrukt(t_knoppen knop){
 
 00000c50 <.L17>:
             else if((KNOPPINS&(1<<PLUSKNOP))&&(knopIngedrukt)&&((knopTijd+DEBOUNCETIME_S)<time)){
-     c50:	7a 9b       	sbis	0x0f, 2	; 15
+     c50:	79 9b       	sbis	0x0f, 1	; 15
      c52:	4c cf       	rjmp	.-360    	; 0xaec <.L20>
 
 00000c54 <.L31>:
@@ -2316,7 +2316,7 @@ int knop_ingedrukt(t_knoppen knop){
      cce:	7d cf       	rjmp	.-262    	; 0xbca <.L28>
 
 00000cd0 <.L25>:
-     cd0:	79 9b       	sbis	0x0f, 1	; 15
+     cd0:	7a 9b       	sbis	0x0f, 2	; 15
      cd2:	7b cf       	rjmp	.-266    	; 0xbca <.L28>
 
 00000cd4 <.L32>:
