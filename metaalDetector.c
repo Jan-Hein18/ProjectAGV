@@ -20,7 +20,8 @@
 
 #define DETECTCYCLE 400
 #define PWMDUTYCYCLE 16000 //1 ms
-#define PWMPERIOD 4000 //250us
+#define PWMPERIOD 960 //60us
+#define SIGNALFALLPERIOD (PWMPERIOD/10)
 #define DEBOUNCETIME_MS 10
 #define DEBOUNCETIME_S (DEBOUNCETIME_MS*0.001)
 
@@ -29,7 +30,7 @@
 volatile int metaalLinks = 0;
 ISR(TIMER4_CAPT_vect){
     long int ICRval = ICR4;
-    if(ICRval<PWMPERIOD){
+    if((ICRval>SIGNALFALLPERIOD)&&(ICRval<PWMPERIOD)){
         metaalLinks = ICRval<DETECTCYCLE;
     }
 }
@@ -38,7 +39,7 @@ ISR(TIMER4_CAPT_vect){
 volatile int metaalRechts = 0;
 ISR(TIMER5_CAPT_vect){
     long int ICRval = ICR5;
-    if(ICRval<PWMPERIOD){
+    if((ICRval>SIGNALFALLPERIOD)&&(ICRval<PWMPERIOD)){
         metaalLinks = ICRval<DETECTCYCLE;
     }
 }
@@ -61,7 +62,7 @@ void metaaldetector_setup_L() {
     OCR4B = PWMPERIOD;
 
     // Input capture instellen
-    TCCR4B |= (1 << ICES4); // Start op rijzende flank
+    TCCR4B &= ~(1 << ICES4); // Start op vallende flank
     TIMSK4 |= (1 << ICIE4);  // Interrupt inschakelen
 }
 
@@ -82,7 +83,7 @@ void metaaldetector_setup_R() {
     OCR5B = PWMPERIOD;
 
     // Input capture instellen
-    TCCR5B |= (1 << ICES5); // Start op rijzende flank
+    TCCR5B &= ~(1 << ICES5); // Start op vallende flank
     TIMSK5 |= (1 << ICIE5);  // Interrupt inschakelen
 }
 
