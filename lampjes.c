@@ -1,5 +1,5 @@
-#include <IRSensor.c>
-#include <Knoppen.c>
+#include <IRSensor.h>
+#include <Knoppen.h>
 
 
 #define LAMPREGISTER DDRB
@@ -7,7 +7,7 @@
 #define LAMPGROEN PB6
 #define LAMPGEEL PB5
 
-void initLamp(void);{
+void initLamp(void){
     LAMPREGISTER &= ~((1<<LAMPGEEL) | (1<<LAMPGROEN));
     LAMPPORT &= ~((1<<LAMPGEEL) | (1<<LAMPGROEN));
 }

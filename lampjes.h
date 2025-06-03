@@ -1,0 +1,6 @@
+#ifndef LAMPJES_H_INCLUDED
+#define LAMPJES_H_INCLUDED
+
+
+
+#endif // LAMPJES_H_INCLUDED

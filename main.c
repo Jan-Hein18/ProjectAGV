@@ -11,12 +11,12 @@
 #define MAXWALLDISTANCE 15
 
 #define PADAFSTAND 36
-#define BOCHTAANTAL 1
+#define ROUTELENGTE 1
 
-enum enum_richting{e_links,e_rechts, e_vooruit, e_blockblock};
+enum enum_richting{e_links = 0x01,e_rechts = 0x02, e_vooruit, e_achteruit, e_blockblock};
 typedef enum enum_richting t_richting;
 
-t_richting bochten[BOCHTAANTAL] = {e_rechts};//, e_links, e_rechts};
+t_richting route[ROUTELENGTE] = {e_vooruit, };//, e_links, e_rechts};
 
 enum enum_operatingState{e_eStop, e_reset, e_idle, e_pad, e_bocht, e_end};
 typedef enum enum_operatingState t_operatingState;
