@@ -7,12 +7,12 @@
 #define LAMPGROEN PB6
 #define LAMPGEEL PB5
 
-void initLamp(void){
+void initLamp(){
     LAMPREGISTER &= ~((1<<LAMPGEEL) | (1<<LAMPGROEN));
     LAMPPORT &= ~((1<<LAMPGEEL) | (1<<LAMPGROEN));
 }
 
-void lampjesToggle(void){
+void lampjesToggle(){
     int groenAan = 0;
     int geelAan = 0;
     if((IRSensorActief==1) && (geelAan == 0)){
