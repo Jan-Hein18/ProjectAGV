@@ -2,6 +2,7 @@
 #include "Knoppen.h"
 #include "lampjes.h"
 
+#include <avr/io.h>
 
 #define LAMPREGISTER DDRB
 #define LAMPPORT PORTB
@@ -16,19 +17,19 @@ void initLamp(){
 void lampjesToggle(){
     int groenAan = 0;
     int geelAan = 0;
-    if((IRSensorActief==1) && (geelAan == 0)){
+    if((IRSensor_links()==1) && (geelAan == 0)){
         geelAan = 1;
-        LAMPPORT |= (1<<LAMPGEEL)
+        LAMPPORT |= (1<<LAMPGEEL);
     }
-   if((IRSensorActief==0) && (geelAan == 1)){
+   if((IRSensor_links()==0) && (geelAan == 1)){
         geelAan = 0;
-        LAMPPORT &= ~(1<<LAMPGEEL)
+        LAMPPORT &= ~(1<<LAMPGEEL);
    }
    if(knop_ingedrukt(e_limitSwitch) && groenAan==0){
         groenAan = 1;
         LAMPPORT |= (1<<LAMPGROEN);
    }
-   if(!(knop_ingedrukt(e_limitSwitch)) && groenAan = 1){
+   if(!(knop_ingedrukt(e_limitSwitch)) && groenAan== 1){
         groenAan = 0;
         LAMPPORT &= ~(1<<LAMPGROEN);
    }

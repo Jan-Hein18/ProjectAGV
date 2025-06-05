@@ -14,6 +14,7 @@
 #define DEBOUNCETIME_S (DEBOUNCETIME_MS*0.001)
 
 
+
 void initSensoren(void) {
     IRREGISTER &= ~(1 << IRSENSOR);
 }

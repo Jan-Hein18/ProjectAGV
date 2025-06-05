@@ -115,7 +115,7 @@
 	<avr/io.h>
 	<util/delay.h>
 
-1748974512 c:\users\victo\documents\github\projectagv\irsensor.h
+1749114038 c:\users\victo\documents\github\projectagv\irsensor.h
 
 1746011167 source:c:\users\victo\documents\github\projectagv\fuse.c
 	<avr/io.h>
@@ -127,7 +127,7 @@
 
 1748974512 c:\users\victo\documents\github\projectagv\knoppen.h
 
-1748979127 source:c:\users\victo\documents\github\projectagv\main.c
+1749113636 source:c:\users\victo\documents\github\projectagv\main.c
 	"Display1.h"
 	"Knoppen.h"
 	"IRSensor.h"
@@ -160,10 +160,10 @@
 	"avr/io.h"
 	"avr/interrupt.h"
 
-1748974512 source:c:\users\victo\documents\github\projectagv\irsensor.c
+1749114038 source:c:\users\victo\documents\github\projectagv\irsensor.c
 	"IRSensor.h"
 	<avr/io.h>
 	"clock.h"
 
-1748980323 c:\users\victo\documents\github\projectagv\lampjes.h
+1749113636 c:\users\victo\documents\github\projectagv\lampjes.h
 
