@@ -165,5 +165,9 @@
 	<avr/io.h>
 	"clock.h"
 
-1749113636 c:\users\victo\documents\github\projectagv\lampjes.h
+1749502733 c:\users\victo\documents\github\projectagv\lampjes.h
+
+1749502733 source:c:\users\victo\documents\github\projectagv\lampen.c
+	"lampjes.h"
+	<avr/io.h>
 

@@ -1,4 +1,4 @@
-#include "Display1.h"
+
 #include "Knoppen.h"
 #include "IRSensor.h"
 #include "noodstop.h"
@@ -9,7 +9,8 @@
 
 #define DETECTCYCLERESETTIME 0.5 //min duration between end of detect cycle and a new cycle
 #define STOPTIMEATPACKAGE 1 //how long to stop at a package
-#define MAXWALLDISTANCE 15
+#define MAXWALLDISTANCE 15 // afstand tussen pads (niet gebruikt in deze code)
+
 
 #define DRIVESPEED 0.125 //max 2
 #define DRIVESPEEDSCALED DRIVESPEED*0xff/2 //scaled for use in command
@@ -19,7 +20,7 @@
 enum enum_richting{e_links = 0x01,e_rechts = 0x02, e_vooruit, e_achteruit, e_blockblockL, e_blockblockR};
 typedef enum enum_richting t_richting;
 
-#define ROUTELENGTE 3
+#define ROUTELENGTE 4
 const t_richting route[ROUTELENGTE] = {e_vooruit, e_blockblockR, e_vooruit, e_achteruit};
 
 enum enum_operatingState{e_eStop, e_reset, e_idle, e_route, e_end};
@@ -27,18 +28,18 @@ typedef enum enum_operatingState t_operatingState;
 t_operatingState operatingState = e_reset;
 
 int main(void){
+        // Variabelen voor het bijhouden van de vorige toestanden
     t_operatingState lastOperatingState = -1; //operating state in last cycle
     t_operatingState previousOperatingSate = -1; //operating state before last change
     t_operatingState currentOperatingState = -1; //operating state at start of cycle, do not change during cycle
 
-    float lastCycleDuration = 0;
     float cycleStartTime = time;
 
     int resetRoute = 1;
 
     while(1) {
         //calculate cycleTimes
-        lastCycleDuration = time-cycleStartTime;
+
         cycleStartTime = time;
 
         //buffer the previous operatingState when operatingState is changed
@@ -51,17 +52,11 @@ int main(void){
         switch(currentOperatingState){
         case e_eStop:{
             static int continueOperation = 0;
-
+ // Stoppen door stuurcommando (com_rechtCommand met 0 snelheid)
             while(!com_rechtCommand(0xff/2,0,0xff));//stop
 
-            if(((int)time*10)%5){
-                display_string(continueOperation?"cont":"rset");
-            }
-            else{
-                display_string("STOP");
-            }
 
-
+// Start knop ingedrukt? Ga door of reset
             if(knop_ingedrukt(e_startKnop)){
                 operatingState = continueOperation?previousOperatingSate:e_reset;
             }
@@ -92,11 +87,10 @@ int main(void){
 
                 //--SET NEUTRAL STATE--
                 while(!com_rechtCommand(0xff/2,0,0xff));//stop
-                _7segment_write(0,0);
+
             }
 
 
-            display_string("rset");
 
             //wacht tot geen knoppen ingedrukt
             if((!knop_ingedrukt(e_startKnop))){
@@ -110,7 +104,6 @@ int main(void){
                 while(!com_rechtCommand(0xff/2,0,0xff));//stop
             }
 
-            display_string("idle");
 
             if(knop_ingedrukt(e_startKnop)){
                 operatingState = e_route;
@@ -118,209 +111,127 @@ int main(void){
             break;
         }
         case e_route:{
-            //manage the current part of the route
-            static int currentSection = 0;
-            static t_richting currentDir = route[0];
-            static int nextSection = 0;
-            static int newSection = 1;
-            newSection = 0;
+ // Variabelen voor route-secties
+    static int currentSection = 0;
+    static float sectionStartTime = 0;
+    static int sectionInitialized = 0;
+    static float driveToPushTime = 0;
 
-            if(resetRoute){
-                currentSection = 0;
-                currentDir = route[0];
-                nextSection = 0;
-                newSection = 1;
+    switch (currentSection) {
+        case 0: // Stap 1: rij snel vooruit
+            if (!sectionInitialized) {
+                com_rechtCommand(0xff, DRIVESPEEDSCALED, 0xff);
+                sectionStartTime = time;
+                sectionInitialized = 1;
             }
-
-            if(nextSection){
+            // Ga door zodra IR potje detecteert
+            if (IRSensor_links()) {
+                driveToPushTime = time - sectionStartTime;  // Tijd meten voor later
                 currentSection++;
-                if(currentSection>=ROUTELENGTE){//pad klaar
-                    operatingState = e_end;
-                    resetRoute = 1;
-                    break;
-                }
-                currentDir = route[currentSection];
-                newSection = 1;
-                nextSection = 0;
+                sectionInitialized = 0;
             }
-
-
-            switch(currentDir){
-            case e_vooruit:{
-                static float dirStartTime = 0;
-
-                if(newSection){
-                    dirStartTime = time;
-                    while(!com_rechtCommand(0xff,DRIVESPEEDSCALED,0xff));
-                }
-
-
-
-
-
-                //stop na 1 seconde bij 2e rechte stuk (stuk 2 van route)
-                switch(currentSection){
-                case 2:{
-                    const float driveTimeToStop = 1;
-                    if((dirStartTime+driveTimeToStop)<time){
-                        while(!com_rechtCommand(0xff/2,0,0xff));//stop
-                        nextSection = 1;
-                    }
-                    break;
-                }
-                default:{
-                    //tel pakketten
-                    const float driveTimeToStop = 0.1;
-                    static int detect_L = 0; //is a detection cycle active
-                    static int detect_R = 0;
-                    static float detectTimeL = 0;//time when a package was sensed
-                    static float detectTimeR = 0;
-                    static int stoppedL = 0;
-                    static int stoppedR = 0;
-
-
-                    if((!detect_L)&&IRSensor_links()){//start detect cycle
-                            detectTimeL = time;
-                            detect_L = 1;
-                    }
-
-
-
-
-                    if(detect_L){
-                        if(stoppedR){//shift cycle start to compensate for stopping by other sensor
-                            detectTimeL+=lastCycleDuration;
-                        }
-                        else{
-                            if(time<(detectTimeL+driveTimeToStop)){
-                                //do nothing
-                            }
-                            else if(time<(detectTimeL+driveTimeToStop+1)){//stop for 1 second
-                                if(!stoppedL){
-                                    while(!com_rechtCommand(0xff/2,0,0xff));//stop
-                                    stoppedL = 1;
-                                }
-                            }
-                            else if(time<(detectTimeL+driveTimeToStop+1+DETECTCYCLERESETTIME)){//continue
-                                if(stoppedL){
-                                    while(!com_rechtCommand(0xff,DRIVESPEEDSCALED,0xff));
-                                    stoppedL = 0;
-                                }
-                            }
-                            else{
-                                detect_L = 0;
-                            }
-                        }
-
-                    }
-
-                    if(detect_R){
-                        if(stoppedL){//shift cycle start to compensate for stopping by other sensor
-                            detectTimeR+=lastCycleDuration;
-                        }
-                        else{
-                            if(time<(detectTimeR+driveTimeToStop)){
-                                //do nothing
-                            }
-                            else if(time<(detectTimeR+driveTimeToStop+1)){//stop for 1 second
-                                if(!stoppedR){
-                                    while(!com_rechtCommand(0xff/2,0,0xff));//stop
-                                    stoppedR = 1;
-                                }
-                            }
-                            else if(time<(detectTimeR+driveTimeToStop+1+DETECTCYCLERESETTIME)){//continue
-                                if(stoppedR){
-                                    while(!com_rechtCommand(0xff,DRIVESPEEDSCALED,0xff));
-                                    stoppedR = 0;
-                                }
-                            }
-                            else{
-                                detect_R = 0;
-                            }
-                        }
-
-                    }
-
-                }
-                }
-
-
-                if(com_agvDone){
-                    nextSection = 1;
-                }
-                break;
-            }
-            case e_achteruit:{
-                static float dirStartTime = 0;
-                if(newSection){
-                    dirStartTime = time;
-                    while(!com_rechtCommand(0x00,DRIVESPEEDSCALED,0xff));
-                }
-
-                if(com_agvDone){
-                    nextSection = 1;
-                }
-                break;
-            }
-            case e_links:{
-                static float dirStartTime = 0;
-                if(newSection){
-                    dirStartTime = time;
-                    while(!com_bochtCommand(e_links,DRIVESPEEDSCALED,0xff));
-                }
-
-                if(com_agvDone){
-                    nextSection = 1;
-                }
-                break;
-            }
-            case e_rechts:{
-                static float dirStartTime = 0;
-                if(newSection){
-                    dirStartTime = time;
-                    while(!com_bochtCommand(e_rechts,DRIVESPEEDSCALED,0xff));
-                }
-
-                if(com_agvDone){
-                    nextSection = 1;
-                }
-                break;
-            }
-            case e_blockblockL:{
-                static float dirStartTime = 0;
-                if(newSection){
-                    dirStartTime = time;
-                    while(!com_blokBlokCommand(e_links,DRIVESPEEDSCALED,0xff));
-                }
-
-                if(com_agvDone){
-                    nextSection = 1;
-                }
-                break;
-            }
-            case e_blockblockR:{
-                static float dirStartTime = 0;
-                if(newSection){
-                    dirStartTime = time;
-                    while(!com_blokBlokCommand(e_rechts,DRIVESPEEDSCALED,0xff));
-                }
-
-                if(com_agvDone){
-                    nextSection = 1;
-                }
-                break;
-            }
-            }
-
-            resetRoute = 0;
             break;
-        }
+
+        case 1: // Stap 4: rij langzaam vooruit + IR + switch
+            if (!sectionInitialized) {
+                com_rechtCommand(0x80, DRIVESPEEDSCALED, 0xff);
+                sectionStartTime = time;
+                sectionInitialized = 1;
+            }
+
+            lampjesSet(GEEL, 1); //geel aan
+
+            if ((time - sectionStartTime >= 2.0) || knop_ingedrukt(e_limitSwitch)) {
+                lampjesSet(GROEN, 1); //groen aan
+                sectionStartTime = time;
+                com_rechtCommand(0x00, DRIVESPEEDSCALED, 0xff);
+                currentSection++;
+                sectionInitialized = 0;
+            }
+            break;
+
+        case 2: // Stap 6: wacht 3 sec met groen licht
+            if ((time - sectionStartTime) >= 3.0) {
+                    lampjesSet(GROEN, 0); // groen uit
+                currentSection++;
+                sectionInitialized = 0;
+            }
+            break;
+
+        case 3: // Stap 7: achteruit S-bocht
+            if (!sectionInitialized) {
+                com_blokBlokCommand(0x01, DRIVESPEEDSCALED, 0xff);
+                sectionInitialized = 1;
+                lampjesSet(GEEL, 0); //geel uit
+            }
+
+            if (com_agvDone) {
+                currentSection++;
+                sectionInitialized = 0;
+            }
+            break;
+
+        case 4: // Stap 8: rij vooruit
+            if (!sectionInitialized) {
+                com_rechtCommand(0xff, DRIVESPEEDSCALED, 0xff);
+                sectionInitialized = 1;
+            }
+
+            if (IRSensor_links()) { // stap 9: detecteer potje
+                currentSection++;
+                sectionInitialized = 0;
+            }
+            break;
+
+        case 5: // Stap 10: rij langzaam vooruit + IR + switch
+            if (!sectionInitialized) {
+                com_rechtCommand(0x80, DRIVESPEEDSCALED, 0xff);
+                sectionStartTime = time;
+                sectionInitialized = 1;
+            }
+
+            lampjesSet(GEEL, 1); // geel aan
+
+            if ((time - sectionStartTime >= 2.0) || knop_ingedrukt(e_limitSwitch)) {
+                lampjesSet(GROEN, 1); // groen aan
+                sectionStartTime = time;
+                com_rechtCommand(0x00, DRIVESPEEDSCALED, 0xff);
+                currentSection++;
+                sectionInitialized = 0;
+            }
+            break;
+
+        case 6: // Stap 12: wacht 3 sec met groen licht
+            if ((time - sectionStartTime) >= 3.0) {
+                    lampjesSet(GROEN, 0);; // groen uit
+                currentSection++;
+                sectionInitialized = 0;
+            }
+            break;
+
+        case 7: // Stap 13: recht achteruit, zelfde tijd als stap 0
+            if (!sectionInitialized) {
+                com_rechtCommand(0x00, DRIVESPEEDSCALED, 0xff);  // Achteruit
+                sectionStartTime = time;
+                lampjesSet(GEEL, 0); // geel uit
+                sectionInitialized = 1;
+            }
+
+            if ((time - sectionStartTime) >= driveToPushTime) {
+                com_rechtCommand(0xff / 2, 0, 0xff);  // Stop
+                operatingState = e_end;
+            }
+            break;
+    }
+
+    break;
+}
+
         case e_end:{
             if(lastOperatingState!=e_end){
                 while(!com_rechtCommand(0xff/2,0,0xff));//stop
             }
 
-            display_string("end ");
 
             if(knop_ingedrukt(e_startKnop)){
                 operatingState = e_reset;

@@ -1,5 +1,3 @@
-#include "IRSensor.h"
-#include "Knoppen.h"
 #include "lampjes.h"
 
 #include <avr/io.h>
@@ -9,28 +7,39 @@
 #define LAMPGROEN PB6
 #define LAMPGEEL PB5
 
-void initLamp(){
-    LAMPREGISTER &= ~((1<<LAMPGEEL) | (1<<LAMPGROEN));
-    LAMPPORT &= ~((1<<LAMPGEEL) | (1<<LAMPGROEN));
+static uint8_t lampStatus = 0; // bit 0 = geel, bit 1 = groen
+
+void initLamp() {
+    LAMPREGISTER |= (1<<LAMPGEEL) | (1<<LAMPGROEN); // Set als output
+    LAMPPORT &= ~((1<<LAMPGEEL) | (1<<LAMPGROEN));  // Alles uit
+    lampStatus = 0;
 }
 
-void lampjesToggle(){
-    int groenAan = 0;
-    int geelAan = 0;
-    if((IRSensor_links()==1) && (geelAan == 0)){
-        geelAan = 1;
-        LAMPPORT |= (1<<LAMPGEEL);
+void lampjesSet(t_lamp kleur, int aan) {
+    if (kleur == GEEL) {
+        if (aan) {
+            LAMPPORT |= (1<<LAMPGEEL);
+            lampStatus |= (1<<0);
+        } else {
+            LAMPPORT &= ~(1<<LAMPGEEL);
+            lampStatus &= ~(1<<0);
+        }
+    } else if (kleur == GROEN) {
+        if (aan) {
+            LAMPPORT |= (1<<LAMPGROEN);
+            lampStatus |= (1<<1);
+        } else {
+            LAMPPORT &= ~(1<<LAMPGROEN);
+            lampStatus &= ~(1<<1);
+        }
     }
-   if((IRSensor_links()==0) && (geelAan == 1)){
-        geelAan = 0;
-        LAMPPORT &= ~(1<<LAMPGEEL);
-   }
-   if(knop_ingedrukt(e_limitSwitch) && groenAan==0){
-        groenAan = 1;
-        LAMPPORT |= (1<<LAMPGROEN);
-   }
-   if(!(knop_ingedrukt(e_limitSwitch)) && groenAan== 1){
-        groenAan = 0;
-        LAMPPORT &= ~(1<<LAMPGROEN);
-   }
+}
+
+int lampjesStatus(t_lamp kleur) {
+    if (kleur == GEEL) {
+        return (lampStatus & (1<<0)) != 0;
+    } else if (kleur == GROEN) {
+        return (lampStatus & (1<<1)) != 0;
+    }
+    return 0;
 }
