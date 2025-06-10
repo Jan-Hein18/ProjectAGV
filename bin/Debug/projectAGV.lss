@@ -3141,7 +3141,7 @@ int main(void){
     1120:	90 93 7f 02 	sts	0x027F, r25	; 0x80027f <detectTimeL.9+0x3>
 
 00001124 <.L46>:
-                    if(detect_R){
+                    if(detect_R){//detecteer rechts
     1124:	80 91 7a 02 	lds	r24, 0x027A	; 0x80027a <detect_R.8>
     1128:	90 91 7b 02 	lds	r25, 0x027B	; 0x80027b <detect_R.8+0x1>
     112c:	89 2b       	or	r24, r25
@@ -3630,7 +3630,7 @@ int main(void){
     13e2:	72 c0       	rjmp	.+228    	; 0x14c8 <.L81>
 
 000013e4 <.L44>:
-                    if(detect_L){
+                    if(detect_L){//detecteer links
     13e4:	80 91 80 02 	lds	r24, 0x0280	; 0x800280 <detect_L.10>
     13e8:	90 91 81 02 	lds	r25, 0x0281	; 0x800281 <detect_L.10+0x1>
     13ec:	89 2b       	or	r24, r25
@@ -3801,7 +3801,7 @@ int main(void){
     14fc:	73 cf       	rjmp	.-282    	; 0x13e4 <.L44>
 
 000014fe <.L45>:
-                    if(detect_L){
+                    if(detect_L){//detecteer links
     14fe:	80 91 80 02 	lds	r24, 0x0280	; 0x800280 <detect_L.10>
     1502:	90 91 81 02 	lds	r25, 0x0281	; 0x800281 <detect_L.10+0x1>
     1506:	89 2b       	or	r24, r25
@@ -3901,7 +3901,7 @@ int main(void){
     15a8:	f1 f0       	breq	.+60     	; 0x15e6 <.L51>
 
 000015aa <.L50>:
-                    if(detect_R){
+                    if(detect_R){//detecteer rechts
     15aa:	80 91 7a 02 	lds	r24, 0x027A	; 0x80027a <detect_R.8>
     15ae:	90 91 7b 02 	lds	r25, 0x027B	; 0x80027b <detect_R.8+0x1>
     15b2:	89 2b       	or	r24, r25
@@ -4024,7 +4024,7 @@ int main(void){
     167c:	41 f4       	brne	.+16     	; 0x168e <.L56>
 
 0000167e <.L55>:
-                    if(detect_R){
+                    if(detect_R){//detecteer rechts
     167e:	80 91 7a 02 	lds	r24, 0x027A	; 0x80027a <detect_R.8>
     1682:	90 91 7b 02 	lds	r25, 0x027B	; 0x80027b <detect_R.8+0x1>
     1686:	89 2b       	or	r24, r25
@@ -5459,7 +5459,7 @@ int noodstop_Actief(){
 
 00001e86 <__vector_3>:
 
-ISR(INT2_vect){
+ISR(INT2_vect){// zet de AGV in e-stop modus
     1e86:	1f 92       	push	r1
     1e88:	1f b6       	in	r1, 0x3f	; 63
     1e8a:	1f 92       	push	r1
@@ -5469,7 +5469,6 @@ ISR(INT2_vect){
     1e92:	9f 93       	push	r25
 
 00001e94 <.Loc.17>:
-    //run once when e-stop active
     operatingState = e_eStop;
     1e94:	10 92 29 02 	sts	0x0229, r1	; 0x800229 <operatingState+0x1>
     1e98:	10 92 28 02 	sts	0x0228, r1	; 0x800228 <operatingState>
@@ -5490,11 +5489,9 @@ ISR(INT2_vect){
 	...
 
 00001eae <.LBE4>:
-    }*/
 
-
-    //run once when e-stop deactivated
-
+    //account for bouncing before leaving interrupt
+    _delay_ms(20);
 }
     1eae:	9f 91       	pop	r25
     1eb0:	8f 91       	pop	r24

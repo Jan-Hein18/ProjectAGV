@@ -111,7 +111,7 @@ int main(void){
 
             break;
         }
-        case e_idle:{
+        case e_idle:{//wacht tot start
             if(lastOperatingState!=e_idle){
                 while(!com_rechtCommand(0xff/2,0,0xff));//stop
             }
@@ -123,7 +123,7 @@ int main(void){
             }
             break;
         }
-        case e_route:{
+        case e_route:{//volg route en voer verdere taken uit
             //manage the current part of the route
             static int currentSection = 0;
             static t_richting currentDir = route[0];
@@ -197,7 +197,7 @@ int main(void){
 
 
 
-                    if(detect_L){
+                    if(detect_L){//detecteer links
                         if(stoppedR){//shift cycle start to compensate for stopping by other sensor
                             detectTimeL+=lastCycleDuration;
                         }
@@ -229,7 +229,7 @@ int main(void){
 
                     }
 
-                    if(detect_R){
+                    if(detect_R){//detecteer rechts
                         if(stoppedL){//shift cycle start to compensate for stopping by other sensor
                             detectTimeR+=lastCycleDuration;
                         }
@@ -335,7 +335,7 @@ int main(void){
             resetRoute = 0;
             break;
         }
-        case e_end:{
+        case e_end:{//geef weer dat klaar, verder zelfde als idle
             if(lastOperatingState!=e_end){
                 while(!com_rechtCommand(0xff/2,0,0xff));//stop
             }
@@ -345,6 +345,7 @@ int main(void){
             if(knop_ingedrukt(e_startKnop)){
                 operatingState = e_reset;
             }
+            break;
         }
         }
         lastOperatingState = currentOperatingState;
