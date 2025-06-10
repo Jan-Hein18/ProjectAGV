@@ -51,14 +51,18 @@ void ultrasoon_setup_L() {
     ULTRASOON_L_TRIG_DDR |= (1 << ULTRASOON_L_TRIG_BIT);  // Trigger als output
     ULTRASOON_L_ECHO_DDR &= ~(1 << ULTRASOON_L_ECHO_BIT); // Echo als input
 
-    // Timer 5 instellen voor PWM en input capture
+    // Timer 5 instellen voor 10 bit PWM en input capture
     TCCR5A |= (1 << WGM50) | (1 << WGM51);
-    TCCR5B |= (1 << WGM52) | (1 << WGM53);
+    TCCR5B |= (1 << WGM52) | (0 << WGM53);
     TCCR5A |= (1 << COM5B1);
     TCCR5B |= (1 << CS50) | (1 << CS51);
 
-    OCR5A = 15000;  // 60ms periode
-    OCR5B = 3;      // 12us puls
+    //zet output uit
+    OCR5A = 0;      // 12us puls = 3
+    OCR5B = 0;      // 12us puls = 3
+    OCR5C = 0;      // 12us puls = 3
+
+    ultrasoon_switchSensor(e_ultrasooonVoor);
 
     // Input capture instellen
     TCCR5B &= ~(1 << ICES5); // Start op vallende flank
@@ -73,17 +77,49 @@ void ultrasoon_setup_R() {
     ULTRASOON_R_TRIG_DDR |= (1 << ULTRASOON_R_TRIG_BIT);
     ULTRASOON_R_ECHO_DDR &= ~(1 << ULTRASOON_R_ECHO_BIT);
 
+    //10 bit pwm
     TCCR4A |= (1 << WGM40) | (1 << WGM41);
-    TCCR4B |= (1 << WGM42) | (1 << WGM43);
+    TCCR4B |= (1 << WGM42) | (0 << WGM43);
     TCCR4A |= (1 << COM4B1);
     TCCR4B |= (1 << CS40) | (1 << CS41);
 
-    OCR4A = 15000;
-    OCR4B = 3;
+    OCR4A = 0;
+    OCR4B = 0;
+    OCR4C = 0;
+
+    ultrasoon_switchSensor(e_ultrasooonVoor);
 
     TCCR4B &= ~(1 << ICES4);
     TIMSK4 |= (1 << ICIE4);
 }
+
+
+void ultrasoon_switchSensor(t_ultrasoon_sensorstype sensor){
+    OCR4A = 0;
+    OCR4B = 0;
+    OCR4C = 0;
+
+    OCR5A = 0;
+    OCR5B = 0;
+    OCR5C = 0;
+
+
+    switch(sensor){ //12us pulse
+    case e_ultrasooonAchter:{
+        OCR4A = 3;
+        OCR5A = 3;
+    }
+    case e_ultrasooonVoor:{
+        OCR4B = 3;
+        OCR5B = 3;
+    }
+    case e_ultrasooonVolg:{
+        OCR4C = 3;
+        OCR5C = 3;
+    }
+    }
+}
+
 
 float ultrasoon_getDistance_L() {
     static float afstand_in_cm = 0;
