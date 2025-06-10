@@ -24,6 +24,9 @@ void noodstop_Setup(){
     sei();
 }
 
+int noodstop_Actief(){
+    return !(noodstop_PIN&noodstop_BIT);
+}
 
 ISR(INT2_vect){
     //run once when e-stop active

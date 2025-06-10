@@ -7,6 +7,8 @@
 #include "com_module.h"
 #include "metaalDetector.h"
 
+#define MAXPAKKETTEN 15
+
 #define DETECTCYCLERESETTIME 0.5 //min duration between end of detect cycle and a new cycle
 #define STOPTIMEATPACKAGE 1 //how long to stop at a package
 #define MAXWALLDISTANCE 15
@@ -62,7 +64,7 @@ int main(void){
             }
 
 
-            if(knop_ingedrukt(e_startKnop)){
+            if(!noodstop_Actief()&&knop_ingedrukt(e_startKnop)){
                 operatingState = continueOperation?previousOperatingSate:e_reset;
             }
             else if(knop_ingedrukt(e_plusKnop)||knop_ingedrukt(e_minKnop)){
@@ -203,9 +205,14 @@ int main(void){
                             if(time<(detectTimeL+driveTimeToStop)){
                                 //do nothing
                             }
-                            else if(time<(detectTimeL+driveTimeToStop+1)){//stop for 1 second
+                            else if(time<(detectTimeL+driveTimeToStop+1)){//stop for 1 second and count
                                 if(!stoppedL){
                                     while(!com_rechtCommand(0xff/2,0,0xff));//stop
+                                    telPakket_L();
+                                    if(aantalPakkettenTotaal>=MAXPAKKETTEN){
+                                        operatingState = e_end;
+                                        break;
+                                    }
                                     stoppedL = 1;
                                 }
                             }
@@ -230,9 +237,14 @@ int main(void){
                             if(time<(detectTimeR+driveTimeToStop)){
                                 //do nothing
                             }
-                            else if(time<(detectTimeR+driveTimeToStop+1)){//stop for 1 second
+                            else if(time<(detectTimeR+driveTimeToStop+1)){//stop for 1 second and count
                                 if(!stoppedR){
                                     while(!com_rechtCommand(0xff/2,0,0xff));//stop
+                                    telPakket_R();
+                                    if(aantalPakkettenTotaal>=MAXPAKKETTEN){
+                                        operatingState = e_end;
+                                        break;
+                                    }
                                     stoppedR = 1;
                                 }
                             }
