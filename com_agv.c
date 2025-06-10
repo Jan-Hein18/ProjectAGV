@@ -18,6 +18,7 @@
 
 
 volatile int com_RXError = 0;
+volatile int newCommand = 0;
 volatile t_command com_command = {0, 0, 0, 0};
 static volatile char rxBuffer[4] = {0,0,0,0};
 ISR(USART0_RX_vect){//data recieved
@@ -40,6 +41,8 @@ ISR(USART0_RX_vect){//data recieved
         com_command.arg = rxBuffer[1];
         com_command.speed = rxBuffer[2];
         com_command.acceleration = rxBuffer[3];
+
+        newCommand = 1;
 
         //room for custom execution when command is fully recieved
     }

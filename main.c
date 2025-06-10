@@ -26,6 +26,29 @@ int main(void){
     t_operatingState startOperatingState = operatingState;
     while(1) {
         //buffer the previous operatingState when operatingState is changed
+        static t_command com_command_temp = {0,0,0,0};
+        if(newCommand&&!noodstop_ingedrukt()){
+            com_command_temp = com_command;
+            switch(com_command_temp.command){
+            case e_recht:{
+                operatingState = e_bocht;
+                break;
+            }
+            case e_bocht:{
+                operatingState = e_bocht;
+                break;
+            }
+            case e_blokBlok:{
+                operatingState = e_blockBlock;
+                break;
+            }
+            default:{
+                operatingState = e_idle;
+                break;
+            }
+            }
+        }
+
         startOperatingState = operatingState;
         if(lastOperatingState!=operatingState){
             previousOperatingSate = lastOperatingState;
@@ -35,9 +58,6 @@ int main(void){
         switch(startOperatingState){
         case e_eStop:{
             stopAGV();
-            if(!noodstop_ingedrukt()){
-                operatingState = previousOperatingSate;
-            }
             break;
         }
         case e_reset:{
@@ -88,8 +108,8 @@ int main(void){
             break;
         }
         case e_pad:{
-            navigatie_reverse = com_command.arg<0x7F;
-            navigatie_setSpeed(com_command.speed);
+            navigatie_reverse = com_command_temp.arg<0x7F;
+            navigatie_setSpeed(com_command_temp.speed);
 
 
             int muurWeg = 0;

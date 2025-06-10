@@ -15,6 +15,8 @@ typedef struct struct_command t_command;
 extern volatile t_command com_command;
 extern volatile int com_RXError;
 
+extern volatile int newCommand;
+
 void com_setup();
 
 int com_doneCommand();

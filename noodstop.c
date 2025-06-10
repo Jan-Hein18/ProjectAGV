@@ -49,5 +49,6 @@ int noodstop_ingedrukt(){
 
 ISR(INT2_vect){
     operatingState = e_eStop;
+
 }
 
