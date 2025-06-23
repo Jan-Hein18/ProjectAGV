@@ -35,6 +35,19 @@ void navigatie_setup(){
 }
 
 
+void navigatie_zetRichting(t_richting richting){
+    if(richting == e_achteruit){
+        navigatie_reverse = 0;
+        ultrasoon_switchSensor(e_ultrasooonAchter);
+
+    }
+    else{
+        navigatie_reverse = 1;
+        ultrasoon_switchSensor(e_ultrasooonVoor);
+    }
+}
+
+
 void stopAGV() {
     stepperMotor1_setSpeed(0);
     stepperMotor2_setSpeed(0);

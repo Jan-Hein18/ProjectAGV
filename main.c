@@ -73,6 +73,7 @@ int main(void){
                 navigatie_setup();
                 navigatie_setSpeed(3);
                 navigatie_setAcceleratie(3);
+                navigatie_zetRichting(e_vooruit);
 
                 //tellen
                 initSensoren();
@@ -108,7 +109,12 @@ int main(void){
             break;
         }
         case e_pad:{
-            navigatie_reverse = com_command_temp.arg<0x7F;
+            if(com_command_temp.arg<0x7F){
+                navigatie_zetRichting(e_achteruit);
+            }
+            else{
+                navigatie_zetRichting(e_vooruit);
+            }
             navigatie_setSpeed(com_command_temp.speed);
 
 
@@ -163,7 +169,7 @@ int main(void){
         case e_blockBlock:{
             static float startAfstand = 0;
             static float muurGatAfstand = 0;//afstand tussen start en het gat in de muur
-            static float reverse = 0;
+            static int terug = 0;
             switch(lastOperatingState){
             case e_blockBlock:
             case e_eStop:{
@@ -174,7 +180,7 @@ int main(void){
                 //reset
                 startAfstand = navigatie_afstandAfgelegd;
                 muurGatAfstand = 0;
-                reverse = navigatie_reverse;
+                terug = 0;
                 break;
             }
             };
@@ -198,7 +204,14 @@ int main(void){
                 navigatie_navigeerBocht((com_command.arg==e_rechts)?e_links:e_rechts,PADAFSTAND/2);
             }
             else{
-                navigatie_reverse = !reverse;
+                if(!terug&&navigatie_reverse){
+                    navigatie_zetRichting(e_vooruit);
+                    terug = 1;
+                }
+                else if(!terug){
+                    navigatie_zetRichting(e_achteruit);
+                    terug = 1;
+                }
                 navigatie_setSpeed(com_command.speed);
 
                 switch(BLOKBLOKMODUS){
