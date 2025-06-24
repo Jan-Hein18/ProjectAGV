@@ -2,13 +2,21 @@
 #include "avr/io.h"
 #include "avr/interrupt.h"
 
-#define ULTRASOON_L_TRIG_BIT PL4  // OC5B
-#define ULTRASOON_L_TRIG_DDR DDRL
+#define ULTRASOON_L_TRIG1_BIT PL3  // OC5A
+#define ULTRASOON_L_TRIG1_DDR DDRL
+#define ULTRASOON_L_TRIG2_BIT PL4  // OC5B
+#define ULTRASOON_L_TRIG2_DDR DDRL
+#define ULTRASOON_L_TRIG3_BIT PL5  // OC5C
+#define ULTRASOON_L_TRIG3_DDR DDRL
 #define ULTRASOON_L_ECHO_BIT PL1  // ICP5
 #define ULTRASOON_L_ECHO_DDR DDRL
 
-#define ULTRASOON_R_TRIG_BIT PH4  // OC4B
-#define ULTRASOON_R_TRIG_DDR DDRH
+#define ULTRASOON_R_TRIG1_BIT PH4  // OC4A
+#define ULTRASOON_R_TRIG1_DDR DDRH
+#define ULTRASOON_R_TRIG2_BIT PH4  // OC4B
+#define ULTRASOON_R_TRIG2_DDR DDRH
+#define ULTRASOON_R_TRIG3_BIT PH4  // OC4C
+#define ULTRASOON_R_TRIG3_DDR DDRH
 #define ULTRASOON_R_ECHO_BIT PL0  // ICP4
 #define ULTRASOON_R_ECHO_DDR DDRL
 
@@ -48,7 +56,9 @@ void ultrasoon_setup_L() {
     ICR5 = 0;
     nieuwe_meting_L = 0;
 
-    ULTRASOON_L_TRIG_DDR |= (1 << ULTRASOON_L_TRIG_BIT);  // Trigger als output
+    ULTRASOON_L_TRIG1_DDR |= (1 << ULTRASOON_L_TRIG1_BIT);  // Trigger als output
+    ULTRASOON_L_TRIG2_DDR |= (1 << ULTRASOON_L_TRIG2_BIT);  // Trigger als output
+    ULTRASOON_L_TRIG3_DDR |= (1 << ULTRASOON_L_TRIG3_BIT);  // Trigger als output
     ULTRASOON_L_ECHO_DDR &= ~(1 << ULTRASOON_L_ECHO_BIT); // Echo als input
 
     // Timer 5 instellen voor 10 bit PWM en input capture
@@ -74,7 +84,9 @@ void ultrasoon_setup_R() {
     ICR4 = 0;
     nieuwe_meting_R = 0;
 
-    ULTRASOON_R_TRIG_DDR |= (1 << ULTRASOON_R_TRIG_BIT);
+    ULTRASOON_R_TRIG1_DDR |= (1 << ULTRASOON_R_TRIG1_BIT);
+    ULTRASOON_R_TRIG2_DDR |= (1 << ULTRASOON_R_TRIG2_BIT);
+    ULTRASOON_R_TRIG3_DDR |= (1 << ULTRASOON_R_TRIG3_BIT);
     ULTRASOON_R_ECHO_DDR &= ~(1 << ULTRASOON_R_ECHO_BIT);
 
     //10 bit pwm
