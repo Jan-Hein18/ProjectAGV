@@ -120,14 +120,17 @@ void ultrasoon_switchSensor(t_ultrasoon_sensorstype sensor){
     case e_ultrasooonAchter:{
         OCR4A = 3;
         OCR5A = 3;
+        break;
     }
     case e_ultrasooonVoor:{
         OCR4B = 3;
         OCR5B = 3;
+        break;
     }
     case e_ultrasooonVolg:{
         OCR4C = 3;
         OCR5C = 3;
+        break;
     }
     }
 }

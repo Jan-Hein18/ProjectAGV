@@ -16,6 +16,9 @@
 
 #define PADAFSTAND 36
 
+int com_sendCommand(char data);
+
+
 enum enum_operatingState{e_eStop, e_reset, e_idle, e_pad, e_bochtState, e_blockBlock, e_volg};
 typedef enum enum_operatingState t_operatingState;
 t_operatingState operatingState = e_reset;
