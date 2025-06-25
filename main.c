@@ -140,9 +140,11 @@ int main(void){
             }
 
             lampjesSet(GEEL, 1); //geel aan
-
-            if ((time - sectionStartTime >= 2.0) || knop_ingedrukt(e_limitSwitch)) {
+            if(knop_ingedrukt(e_limitSwitch)){
                 lampjesSet(GROEN, 1); //groen aan
+                }
+            if ((time - sectionStartTime >= 2.0)) {
+
                 sectionStartTime = time;
                 com_rechtCommand(0x00, DRIVESPEEDSCALED, 0xff);
                 currentSection++;

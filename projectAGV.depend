@@ -102,12 +102,12 @@
 
 1747831423 c:\users\victo\documents\github\projectagv\display1.h
 
-1747988513 source:c:\users\victo\documents\github\projectagv\com_module.c
+1750851794 source:c:\users\victo\documents\github\projectagv\com_module.c
 	"com_module.h"
 	<avr/io.h>
 	<avr/interrupt.h>
 
-1747988513 c:\users\victo\documents\github\projectagv\com_module.h
+1750851794 c:\users\victo\documents\github\projectagv\com_module.h
 
 1747831423 source:c:\users\victo\documents\github\projectagv\display1.c
 	"Display1.h"
@@ -115,20 +115,19 @@
 	<avr/io.h>
 	<util/delay.h>
 
-1749114038 c:\users\victo\documents\github\projectagv\irsensor.h
+1750851794 c:\users\victo\documents\github\projectagv\irsensor.h
 
 1746011167 source:c:\users\victo\documents\github\projectagv\fuse.c
 	<avr/io.h>
 
-1748974512 source:c:\users\victo\documents\github\projectagv\knoppen.c
+1750851794 source:c:\users\victo\documents\github\projectagv\knoppen.c
 	"Knoppen.h"
 	<avr/io.h>
 	"clock.h"
 
-1748974512 c:\users\victo\documents\github\projectagv\knoppen.h
+1750851794 c:\users\victo\documents\github\projectagv\knoppen.h
 
-1749113636 source:c:\users\victo\documents\github\projectagv\main.c
-	"Display1.h"
+1750852056 source:c:\users\victo\documents\github\projectagv\main.c
 	"Knoppen.h"
 	"IRSensor.h"
 	"noodstop.h"
@@ -140,18 +139,18 @@
 1746011167 c:\users\victo\documents\github\projectagv\ultrasoon.h
 	<util/delay.h>
 
-1746011167 c:\users\victo\documents\github\projectagv\noodstop.h
+1750851794 c:\users\victo\documents\github\projectagv\noodstop.h
 
-1748974512 c:\users\victo\documents\github\projectagv\pakketten.h
+1750841842 c:\users\victo\documents\github\projectagv\pakketten.h
 
-1747988513 source:c:\users\victo\documents\github\projectagv\noodstop.c
+1750851794 source:c:\users\victo\documents\github\projectagv\noodstop.c
 	"noodstop.h"
 	"util/delay.h"
 	"avr/io.h"
 	"avr/interrupt.h"
 	"Display1.h"
 
-1748974512 source:c:\users\victo\documents\github\projectagv\pakketten.c
+1750851794 source:c:\users\victo\documents\github\projectagv\pakketten.c
 	"pakketten.h"
 	"IRSensor.h"
 
@@ -160,14 +159,14 @@
 	"avr/io.h"
 	"avr/interrupt.h"
 
-1749114038 source:c:\users\victo\documents\github\projectagv\irsensor.c
+1750851794 source:c:\users\victo\documents\github\projectagv\irsensor.c
 	"IRSensor.h"
 	<avr/io.h>
 	"clock.h"
 
-1749502733 c:\users\victo\documents\github\projectagv\lampjes.h
+1750851794 c:\users\victo\documents\github\projectagv\lampjes.h
 
-1749502733 source:c:\users\victo\documents\github\projectagv\lampen.c
+1750851794 source:c:\users\victo\documents\github\projectagv\lampen.c
 	"lampjes.h"
 	<avr/io.h>
 

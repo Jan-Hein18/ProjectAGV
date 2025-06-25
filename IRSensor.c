@@ -5,9 +5,9 @@
 #include "clock.h"
 
 
-#define IRREGISTER DDRK
-#define IRPINS PINK
-#define IRSENSOR PK0
+#define IRREGISTER DDRE
+#define IRPINS PINE
+#define IRSENSOR PE4
 
 
 #define DEBOUNCETIME_MS 50
