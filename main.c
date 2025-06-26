@@ -12,8 +12,8 @@
 #define MAXWALLDISTANCE 15 // afstand tussen pads (niet gebruikt in deze code)
 
 
-#define DRIVESPEED 0.125 //max 2
-#define DRIVESPEEDSCALED DRIVESPEED*0xff/2 //scaled for use in command
+#define DRIVESPEED 0.3 //max 2
+#define DRIVESPEEDSCALED DRIVESPEED*100 //scaled for use in command
 
 #define PADAFSTAND 36
 
@@ -134,7 +134,7 @@ int main(void){
 
         case 1: // Stap 4: rij langzaam vooruit + IR + switch
             if (!sectionInitialized) {
-                com_rechtCommand(0x80, DRIVESPEEDSCALED, 0xff);
+                com_rechtCommand(0xff,8, 0xff);
                 sectionStartTime = time;
                 sectionInitialized = 1;
             }
@@ -143,33 +143,49 @@ int main(void){
             if(knop_ingedrukt(e_limitSwitch)){
                 lampjesSet(GROEN, 1); //groen aan
                 }
-            if ((time - sectionStartTime >= 2.0)) {
+            if ((time - sectionStartTime) >= 2.0) {
 
                 sectionStartTime = time;
-                com_rechtCommand(0x00, DRIVESPEEDSCALED, 0xff);
+                com_rechtCommand(0x7f, 0, 0xff); // stop command
                 currentSection++;
                 sectionInitialized = 0;
             }
             break;
 
         case 2: // Stap 6: wacht 3 sec met groen licht
-            if ((time - sectionStartTime) >= 3.0) {
+
+            if ((time - sectionStartTime) >= 1.0) {
                     lampjesSet(GROEN, 0); // groen uit
-                currentSection++;
+                currentSection = 80;
                 sectionInitialized = 0;
             }
             break;
+        case 80:
+            if (!sectionInitialized) {
+                com_rechtCommand(0x00, DRIVESPEEDSCALED, 0xff); // rij achteruit
+                sectionStartTime = time;
+                sectionInitialized = 1;
+            }
+            if ((time - sectionStartTime) >= 0.3){
+                //com_rechtCommand(0x7f, 0, 0xff); // stop command
+                currentSection = 3;
+                sectionInitialized = 0;
+            }
 
         case 3: // Stap 7: achteruit S-bocht
             if (!sectionInitialized) {
-                com_blokBlokCommand(0x01, DRIVESPEEDSCALED, 0xff);
+                while(!com_blokBlokCommand(0x02, DRIVESPEEDSCALED, 0xff));
+                //com_rechtCommand(0xff,8, 0xff);
+
                 sectionInitialized = 1;
                 lampjesSet(GEEL, 0); //geel uit
+                com_agvDone = 0;
             }
 
             if (com_agvDone) {
                 currentSection++;
                 sectionInitialized = 0;
+                com_agvDone = 0;
             }
             break;
 
@@ -187,7 +203,7 @@ int main(void){
 
         case 5: // Stap 10: rij langzaam vooruit + IR + switch
             if (!sectionInitialized) {
-                com_rechtCommand(0x80, DRIVESPEEDSCALED, 0xff);
+                com_rechtCommand(0xff, 8, 0xff);
                 sectionStartTime = time;
                 sectionInitialized = 1;
             }
@@ -197,14 +213,14 @@ int main(void){
             if ((time - sectionStartTime >= 2.0) || knop_ingedrukt(e_limitSwitch)) {
                 lampjesSet(GROEN, 1); // groen aan
                 sectionStartTime = time;
-                com_rechtCommand(0x00, DRIVESPEEDSCALED, 0xff);
+                com_rechtCommand(0x7f, 0, 0xff);//stop
                 currentSection++;
                 sectionInitialized = 0;
             }
             break;
 
         case 6: // Stap 12: wacht 3 sec met groen licht
-            if ((time - sectionStartTime) >= 3.0) {
+            if ((time - sectionStartTime) >= 1.0) {
                     lampjesSet(GROEN, 0);; // groen uit
                 currentSection++;
                 sectionInitialized = 0;

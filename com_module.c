@@ -24,7 +24,7 @@ ISR(USART0_RX_vect){//data recieved
         //room for custom rx error handling
     }
 
-    volatile char recievedData = UDR0;
+    volatile unsigned char recievedData = UDR0;
     if(recievedData == 0x01){
         com_agvDone = 1;
 
@@ -33,7 +33,7 @@ ISR(USART0_RX_vect){//data recieved
 }
 
 static volatile int readyToSend = 0;
-static volatile char txBuffer[4] = {0,0,0,0};
+static volatile unsigned char txBuffer[4] = {0,0,0,0};
 ISR(USART0_UDRE_vect){//room to send data
     static volatile int byteCounter = 0;
 
@@ -167,7 +167,7 @@ void com_setup(){
     readyToSend = 1;
 }
 
-int com_sendCommand(char data[4]){
+int com_sendCommand(unsigned char data[4]){
     if(readyToSend){
         readyToSend = 0;
         for(int i = 0;i<4;i++){
@@ -182,18 +182,18 @@ int com_sendCommand(char data[4]){
     }
 }
 
-int com_rechtCommand(char f_arg, char f_speed, char f_acceleration){
-    char data[4] = {0x01,f_arg,f_speed,f_acceleration};
+int com_rechtCommand(unsigned char f_arg, unsigned char f_speed, unsigned char f_acceleration){
+    unsigned char data[4] = {0x01,f_arg,f_speed,f_acceleration};
     return com_sendCommand(data);; //return 0 when data can not be send
 }
 
-int com_bochtCommand(char f_arg, char f_speed, char f_acceleration){
-    char data[4] = {0x02,f_arg,f_speed,f_acceleration};
+int com_bochtCommand(unsigned char f_arg, unsigned char f_speed, unsigned char f_acceleration){
+    unsigned char data[4] = {0x02,f_arg,f_speed,f_acceleration};
     return com_sendCommand(data);; //return 0 when data can not be send
 }
 
-int com_blokBlokCommand(char f_arg, char f_speed, char f_acceleration){
-    char data[4] = {0x03,f_arg,f_speed,f_acceleration};
+int com_blokBlokCommand(unsigned char f_arg, unsigned char f_speed, unsigned char f_acceleration){
+    unsigned char data[4] = {0x03,f_arg,f_speed,f_acceleration};
     return com_sendCommand(data); //return 0 when data can not be send
 }
 
