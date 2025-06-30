@@ -7,10 +7,10 @@
 #define DEBOUNCETIME_MS 20
 #define DEBOUNCETIME_S (DEBOUNCETIME_MS*0.001)
 
-#define noodstop_DDR    DDRB
-#define noodstop_PORT   PORTB
-#define noodstop_PIN    PINB
-#define noodstop_BIT    (1<<PB2)
+#define noodstop_DDR    DDRD
+#define noodstop_PORT   PORTD
+#define noodstop_PIN    PIND
+#define noodstop_BIT    (1<<PD0)
 
 #include "Display1.h"
 
@@ -22,8 +22,8 @@ extern t_operatingState operatingState;
 void noodstop_Setup(){
     noodstop_DDR &= ~noodstop_BIT;
     noodstop_PORT |= noodstop_BIT;
-    EICRA |= ISC20|ISC21;
-    EIMSK |= INT2;
+    EICRA &= ~(ISC00|ISC01);
+    EIMSK |= (1 << INT0);
     sei();
 }
 
@@ -47,8 +47,10 @@ int noodstop_ingedrukt(){
 }
 
 
-ISR(INT2_vect){
+ISR(INT0_vect){
+    stopAGV();
     operatingState = e_eStop;
+    //while(!com_sendCommand(50));
 
 }
 

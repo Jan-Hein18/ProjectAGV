@@ -6,7 +6,7 @@
 #define FREQUENCY 1000
 #define OVF 250
 
-volatile float time = 0;
+volatile double time = 0;
 
 ISR(TIMER0_COMPA_vect){
     time+=1.0/FREQUENCY;

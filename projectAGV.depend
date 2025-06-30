@@ -50,14 +50,14 @@
 
 1749587269 d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\noodstop.h
 
-1749591673 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\noodstop.c
+1750840098 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\noodstop.c
 	"noodstop.h"
 	<avr/io.h>
 	<avr/interrupt.h>
 	"clock.h"
 	"Display1.h"
 
-1746623976 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\ultrasoon.c
+1750770725 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\ultrasoon.c
 	"Ultrasoon.h"
 	"avr/io.h"
 	"avr/interrupt.h"
@@ -66,7 +66,7 @@
 	"stepperMotor.h"
 	"avr/io.h"
 
-1750705535 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\navigatie.c
+1750769763 source:d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\navigatie.c
 	"Navigatie.h"
 	<avr/io.h>
 	"StepperMotor.h"
@@ -97,5 +97,5 @@
 	<avr/io.h>
 	<avr/interrupt.h>
 
-1749591718 d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\com_agv.h
+1750769529 d:\programming\codeblocks\jaar 1\periode 2\project agv\deel2\com_agv.h
 

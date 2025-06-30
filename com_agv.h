@@ -6,9 +6,9 @@ typedef enum enum_commands t_commands;
 
 struct struct_command{
     t_commands command;
-    char arg;
-    char speed;
-    char acceleration;
+    unsigned char arg;
+    unsigned char speed;
+    unsigned char acceleration;
 };
 typedef struct struct_command t_command;
 
@@ -20,7 +20,7 @@ extern volatile int newCommand;
 void com_setup();
 
 int com_doneCommand();
-
+int com_sendCommand(char data);
 
 
 

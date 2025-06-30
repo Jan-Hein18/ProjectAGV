@@ -44,6 +44,8 @@ ISR(USART0_RX_vect){//data recieved
 
         newCommand = 1;
 
+
+
         //room for custom execution when command is fully recieved
     }
 }

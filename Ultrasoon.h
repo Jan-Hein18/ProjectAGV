@@ -20,4 +20,7 @@ void ultrasoon_switchSensor(t_ultrasoon_sensorstype sensor);
 float ultrasoon_getDistance_L();
 float ultrasoon_getDistance_R();
 
+int ultrasoon_wallGoneL();
+int ultrasoon_wallGoneR();
+
 #endif // ULTRASOON_H

@@ -2,7 +2,7 @@
 #define clock_included
 
 void initClock();
-extern volatile float time;
+extern volatile double time;
 
 #endif // clock_included
 

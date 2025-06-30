@@ -6,25 +6,26 @@
 #include "Ultrasoon.h"
 #include "clock.h"
 #include "Display1.h"
+#include "com_agv.h"
 
 
-#define AGV_WIDTH 18.5 //wheel to wheel [cm]
+#define AGV_WIDTH ((float)20) //wheel to wheel [cm]
 #define MAX_SPEED 0.2 // [m/s]
 #define MAX_ACCELERATIE 1 // [m/s2]
 #define MIN_RADIUS (AGV_WIDTH/2) //[cm]
-#define MOTORCONSTANT 425 //[percent/(m/s)]
-#define TURNCONSTANT 1 //turn radius when difference between wall distances is 1cm [cm]
+#define MOTORCONSTANT 200 //[percent/(m/s)]
+#define TURNCONSTANT 40 //turn radius when difference between wall distances is 1cm [cm]
 #define PAD_TURNDEADZONE 0.5 //[cm]
+#define MAXWALLDISTANCE 13
 
 
-
-float navigatie_speedGoal = 0;
-static float navigatie_speedCurrent = 0;
-float navigatie_acceleratie = 0;
+double navigatie_speedGoal = 0;
+static double navigatie_speedCurrent = 0;
+double navigatie_acceleratie = 0;
 float navigatie_reverse = 0;
 static float navigatie_executieTijd = 0;
 
-float navigatie_afstandAfgelegd = 0;
+double navigatie_afstandAfgelegd = 0;
 
 void navigatie_setup(){
     navigatie_speedGoal = 0;
@@ -37,12 +38,12 @@ void navigatie_setup(){
 
 void navigatie_zetRichting(t_richting richting){
     if(richting == e_achteruit){
-        navigatie_reverse = 0;
+        navigatie_reverse = 1;
         ultrasoon_switchSensor(e_ultrasooonAchter);
 
     }
     else{
-        navigatie_reverse = 1;
+        navigatie_reverse = 0;
         ultrasoon_switchSensor(e_ultrasooonVoor);
     }
 }
@@ -53,11 +54,25 @@ void stopAGV() {
     stepperMotor2_setSpeed(0);
     navigatie_setSpeed(0);
     navigatie_speedCurrent = 0;
+    navigatie_navigeerBocht(0,0);
+    stepperMotor1_setSpeed(0);
+    stepperMotor2_setSpeed(0);
 }
 
 void navigatie_navigeerPad(){
     float afstand_links = ultrasoon_getDistance_L();
     float afstand_rechts = ultrasoon_getDistance_R();
+
+    if((afstand_links > MAXWALLDISTANCE)&&(afstand_rechts > MAXWALLDISTANCE)){
+        afstand_links = MAXWALLDISTANCE;
+        afstand_rechts = MAXWALLDISTANCE;
+    }
+    else if(afstand_links > MAXWALLDISTANCE){
+        afstand_links = afstand_rechts;
+    }
+    else if(afstand_rechts > MAXWALLDISTANCE){
+        afstand_rechts = afstand_links;
+    }
 
     if(afstand_rechts > afstand_links+PAD_TURNDEADZONE){//draai naar rechts
         navigatie_navigeerBocht(e_rechts,(1.0/(afstand_rechts-afstand_links))*TURNCONSTANT);
@@ -103,7 +118,7 @@ void navigatie_navigeerMuurR(float afstand){
 
 void navigatie_navigeerBocht(t_richting f_draaiRichting, int f_radiusCm){
     //update afstand
-    static float lastRealSpeed = 0; //compenseer voor snelheid in bochten
+    static double lastRealSpeed = 0; //compenseer voor snelheid in bochten
     navigatie_afstandAfgelegd += lastRealSpeed*(time-navigatie_executieTijd);
 
     //bereken snelheid
@@ -127,13 +142,13 @@ void navigatie_navigeerBocht(t_richting f_draaiRichting, int f_radiusCm){
     }
 
     switch(f_draaiRichting){
-    case e_links:{
-        stepperMotor1_setSpeed(MOTORCONSTANT*((2*f_radiusCm-AGV_WIDTH)/(2*f_radiusCm+AGV_WIDTH))*navigatie_speedCurrent*((navigatie_reverse)?-1:1));
+    case e_rechts:{
+        stepperMotor1_setSpeed(MOTORCONSTANT*(((2*f_radiusCm-AGV_WIDTH)/(2*f_radiusCm+AGV_WIDTH))*navigatie_speedCurrent)*((navigatie_reverse)?-1:1));
         stepperMotor2_setSpeed(MOTORCONSTANT*navigatie_speedCurrent*((navigatie_reverse)?-1:1));
         lastRealSpeed = ((2*f_radiusCm)/(2*f_radiusCm+AGV_WIDTH))*navigatie_speedCurrent;
         break;
     }
-    case e_rechts:{
+    case e_links:{
         stepperMotor1_setSpeed(MOTORCONSTANT*navigatie_speedCurrent*((navigatie_reverse)?-1:1));
         stepperMotor2_setSpeed(MOTORCONSTANT*(((2*f_radiusCm-AGV_WIDTH)/(2*f_radiusCm+AGV_WIDTH))*navigatie_speedCurrent)*((navigatie_reverse)?-1:1));
         lastRealSpeed = ((2*f_radiusCm)/(2*f_radiusCm+AGV_WIDTH))*navigatie_speedCurrent;
@@ -156,8 +171,8 @@ void navigatie_navigeerBocht(t_richting f_draaiRichting, int f_radiusCm){
 }
 
 
-void navigatie_setSpeed(float f_speed){
-    navigatie_speedGoal = (f_speed<MAX_SPEED)?((f_speed<0)?0:f_speed):MAX_SPEED;
+void navigatie_setSpeed(unsigned char f_speed){//cm/s
+    navigatie_speedGoal = ((f_speed/100.0)<MAX_SPEED)?(((f_speed/100.0)<0)?0:(f_speed/100.0)):MAX_SPEED;
 }
 
 void navigatie_setAcceleratie(float f_Acceleratie){
