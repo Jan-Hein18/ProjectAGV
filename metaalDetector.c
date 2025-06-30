@@ -18,29 +18,81 @@
 
 
 
-#define DETECTCYCLE 400
-#define PWMDUTYCYCLE 16000 //1 ms
-#define PWMPERIOD 960 //60us
-#define SIGNALFALLPERIOD (PWMPERIOD/10)
+#define DETECTCYCLE 2400 //60us
+#define DETECTMARGION 10
+#define PWMDUTYCYCLE 64000 //1 ms
+#define PWMPERIOD 2000 //250us
+#define SIGNALFALLPERIOD 960 // 60us
 #define DEBOUNCETIME_MS 10
 #define DEBOUNCETIME_S (DEBOUNCETIME_MS*0.001)
 
 
 //metaal links
 volatile int metaalLinks = 0;
+volatile long int ICRL = 0;
+
+volatile long int ICRBUFFL[100];
+volatile int bufflocL = 0;
+
+volatile unsigned long int setPointL = 0;
+volatile unsigned long int setPointR = 0;
+
+
 ISR(TIMER4_CAPT_vect){
     long int ICRval = ICR4;
-    if((ICRval>SIGNALFALLPERIOD)&&(ICRval<PWMPERIOD)){
-        metaalLinks = ICRval<DETECTCYCLE;
+    if((ICRval>SIGNALFALLPERIOD)&&(ICRval<PWMPERIOD*0.95)){
+
+        ICRBUFFL[bufflocL] = ICRval;
+        bufflocL++;
+        if(bufflocL>=100){
+            bufflocL = 0;
+        }
+
+        unsigned long int temp1 = 0;
+
+        for(int i = 0; i<100; i++){
+            temp1+=ICRBUFFL[i];
+        }
+        temp1/=100;
+
+
+        ICRL = temp1;
+
+
+        metaalLinks = ICRL>(setPointL+DETECTMARGION);
     }
 }
 
+
 //metaal rechts
 volatile int metaalRechts = 0;
+volatile long int ICRR = 0;
+
+volatile long int ICRBUFFR[100];
+volatile int bufflocR = 0;
+
 ISR(TIMER5_CAPT_vect){
     long int ICRval = ICR5;
-    if((ICRval>SIGNALFALLPERIOD)&&(ICRval<PWMPERIOD)){
-        metaalLinks = ICRval<DETECTCYCLE;
+    if((ICRval>SIGNALFALLPERIOD)&&(ICRval<PWMPERIOD*0.95)){
+
+        ICRBUFFR[bufflocR] = ICRval;
+        bufflocR++;
+        if(bufflocR>=100){
+            bufflocR = 0;
+        }
+
+        unsigned long int temp1 = 0;
+
+        for(int i = 0; i<100; i++){
+            temp1+=ICRBUFFR[i];
+        }
+        temp1/=100;
+
+
+        ICRR = temp1;//ICRval;//temp1>temp2;
+
+
+        metaalRechts = ICRR>(setPointR+DETECTMARGION);
     }
 }
 
@@ -83,18 +135,20 @@ void metaaldetector_setup_R() {
     OCR5B = PWMPERIOD;
 
     // Input capture instellen
-    TCCR5B &= ~(1 << ICES5); // Start op vallende flank
+    TCCR5B &= ~(1 << ICES5); // Start op rijzende flank
     TIMSK5 |= (1 << ICIE5);  // Interrupt inschakelen
 }
 
 void metaaldetector_setup() {
     metaaldetector_setup_L();
+
     metaaldetector_setup_R();
     sei();  // Schakel interrupts in
 }
 
 
 int metaaldetector_links(){
+    return metaalLinks;
     static int metaalGedetecteerd = 0;
     static float detectieTijd = 0;
     if(detectieTijd>time){
@@ -114,6 +168,7 @@ int metaaldetector_links(){
 }
 
 int metaaldetector_rechts(){
+    return metaalRechts;
     static int metaalGedetecteerd = 0;
     static float detectieTijd = 0;
     if(detectieTijd>time){
@@ -130,4 +185,13 @@ int metaaldetector_rechts(){
     }
 
     return metaalGedetecteerd;
+}
+
+
+void metaaldetector_setPointL(){
+    setPointL = ICRL;
+}
+
+void metaaldetector_setPointR(){
+    setPointR = ICRR;
 }

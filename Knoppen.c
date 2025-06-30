@@ -1,6 +1,7 @@
 #include "Knoppen.h"
 
 #include <avr/io.h>
+#include <util/delay.h>
 
 #include "clock.h"
 
@@ -20,7 +21,13 @@
 
 void knop_setup(){
     KNOPREGISTER |= (1 << STARTKNOP) | (1 << PLUSKNOP) | (1 << MINKNOP);
-    KNOPPORTS |= (1 << STARTKNOP) | (1 << PLUSKNOP) | (1 << MINKNOP);;
+    KNOPPORTS |= (1 << STARTKNOP) | (1 << PLUSKNOP) | (1 << MINKNOP);
+
+
+    knop_ingedrukt(e_startKnop);
+    knop_ingedrukt(e_plusKnop);
+    knop_ingedrukt(e_minKnop);
+    _delay_ms(2*DEBOUNCETIME_MS);
 }
 
 

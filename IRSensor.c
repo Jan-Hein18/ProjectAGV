@@ -5,10 +5,10 @@
 #include "clock.h"
 
 
-#define IRREGISTER DDRK
-#define IRPINS PINK
-#define IRSENSOR_L PK0
-#define IRSENSOR_R PK1
+#define IRREGISTER DDRH
+#define IRPINS PINH
+#define IRSENSOR_L PH5
+#define IRSENSOR_R PH6
 
 #define DEBOUNCETIME_MS 50
 #define DEBOUNCETIME_S (DEBOUNCETIME_MS*0.001)

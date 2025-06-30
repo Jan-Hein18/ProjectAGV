@@ -7,6 +7,8 @@
 #include "com_module.h"
 #include "metaalDetector.h"
 
+#include <util/delay.h>
+
 #define MAXPAKKETTEN 15
 
 #define DETECTCYCLERESETTIME 0.5 //min duration between end of detect cycle and a new cycle
@@ -22,7 +24,7 @@ enum enum_richting{e_links = 0x01,e_rechts = 0x02, e_vooruit, e_achteruit, e_blo
 typedef enum enum_richting t_richting;
 
 #define ROUTELENGTE 3
-const t_richting route[ROUTELENGTE] = {e_vooruit, e_rechts, e_vooruit};
+const t_richting route[ROUTELENGTE] = {e_achteruit, e_rechts, e_achteruit};
 
 enum enum_operatingState{e_eStop, e_reset, e_idle, e_route, e_end};
 typedef enum enum_operatingState t_operatingState;
@@ -84,6 +86,9 @@ int main(void){
                 metaaldetector_setup();
                 aantalPakkettenMetaal = 0;
                 aantalPakkettenLeeg = 0;
+                _delay_ms(3000);
+                metaaldetector_setPointL();
+                metaaldetector_setPointR();
 
                 //ui
                 _7segment_setup();
@@ -91,6 +96,7 @@ int main(void){
 
                 //mi
                 com_setup();
+
 
                 //reset operatingStates
                 resetRoute = 1;
@@ -164,19 +170,15 @@ int main(void){
 
 
 
-                //stop na 1 seconde bij 2e rechte stuk (stuk 2 van route)
+                //tel bij 2e rechte stuk (stuk 2 van route)
                 switch(currentSection){
                 case 2:{
-                    const float driveTimeToStop = 1;
-                    if((dirStartTime+driveTimeToStop)<time){
-                        while(!com_rechtCommand(0xff/2,0,0xff));//stop
-                        nextSection = 1;
-                    }
-                    break;
-                }
-                default:{
                     //tel pakketten
-                    const float driveTimeToStop = 0.1;
+                    display_getal(aantalPakkettenLeeg*100+aantalPakkettenMetaal);
+
+
+                    break;
+                    const float driveTimeToStop = 0.4;
                     static int detect_L = 0; //is a detection cycle active
                     static int detect_R = 0;
                     static float detectTimeL = 0;//time when a package was sensed
@@ -276,6 +278,126 @@ int main(void){
                     dirStartTime = time;
                     while(!com_rechtCommand(0x00,DRIVESPEEDSCALED,0xff));
                 }
+
+                //tel bij 2e rechte stuk (stuk 2 van route)
+                switch(currentSection){
+                case 2:{
+                    //tel pakketten
+                    display_getal(aantalPakkettenLeeg*100+aantalPakkettenMetaal);
+
+
+                    //break;
+                    const float driveTimeToStop = 0.35;
+                    static int detect_L = 0; //is a detection cycle active
+                    static int detect_R = 0;
+                    static float detectTimeL = 0;//time when a package was sensed
+                    static float detectTimeR = 0;
+                    static int stoppedL = 0;
+                    static int stoppedR = 0;
+
+                    static int countedL = 0;
+                    static int countedR = 0;
+
+
+                    if((!detect_L)&&IRSensor_links()){//start detect cycle
+                            detectTimeL = time;
+                            detect_L = 1;
+                    }
+
+                    if((!detect_R)&&IRSensor_rechts()){//start detect cycle
+                            detectTimeR = time;
+                            detect_R = 1;
+                    }
+
+
+
+                    if(detect_L){//detecteer links
+                        if(stoppedR){//shift cycle start to compensate for stopping by other sensor
+                            detectTimeL+=lastCycleDuration;
+                        }
+                        else{
+                            if(time<(detectTimeL+driveTimeToStop)){
+                                //do nothing
+                            }
+                            else if(time<(detectTimeL+driveTimeToStop+1)){//stop for 1 second and count
+                                if(!stoppedL){
+                                    while(!com_rechtCommand(0xff/2,0,0xff));//stop
+                                    //telPakket_L();
+                                    if(aantalPakkettenTotaal>=MAXPAKKETTEN){
+                                        operatingState = e_end;
+                                        break;
+                                    }
+                                    stoppedL = 1;
+                                }
+
+                                if(time>(detectTimeL+driveTimeToStop+0.5)){
+                                    if(!countedL){
+                                        countedL = 1;
+                                        telPakket_L();
+                                    }
+                                }
+
+
+                            }
+                            else if(time<(detectTimeL+driveTimeToStop+1+DETECTCYCLERESETTIME)){//continue
+                                if(stoppedL){
+                                    while(!com_rechtCommand(0x00,DRIVESPEEDSCALED,0xff));
+                                    stoppedL = 0;
+                                }
+                            }
+                            else{
+                                detect_L = 0;
+                                countedL = 0;
+                            }
+                        }
+
+                    }
+
+                    if(detect_R){//detecteer rechts
+                        if(stoppedL){//shift cycle start to compensate for stopping by other sensor
+                            detectTimeR+=lastCycleDuration;
+                        }
+                        else{
+                            if(time<(detectTimeR+driveTimeToStop)){
+                                //do nothing
+                            }
+                            else if(time<(detectTimeR+driveTimeToStop+1)){//stop for 1 second and count
+                                if(!stoppedR){
+                                    while(!com_rechtCommand(0xff/2,0,0xff));//stop
+                                    //telPakket_R();
+                                    if(aantalPakkettenTotaal>=MAXPAKKETTEN){
+                                        operatingState = e_end;
+                                        break;
+                                    }
+                                    stoppedR = 1;
+                                }
+
+
+
+                                if(time>(detectTimeR+driveTimeToStop+0.5)){
+                                    if(!countedR){
+                                        countedR = 1;
+                                        telPakket_R();
+                                    }
+                                }
+                            }
+                            else if(time<(detectTimeR+driveTimeToStop+1+DETECTCYCLERESETTIME)){//continue
+                                if(stoppedR){
+                                    while(!com_rechtCommand(0x00,DRIVESPEEDSCALED,0xff));
+                                    stoppedR = 0;
+                                }
+                            }
+                            else{
+                                detect_R = 0;
+                                countedR = 0;
+                            }
+                        }
+
+                    }
+
+                }
+                }
+
 
                 if(com_agvDone){
                     nextSection = 1;

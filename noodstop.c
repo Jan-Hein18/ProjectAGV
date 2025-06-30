@@ -20,7 +20,7 @@ void noodstop_Setup(){
     noodstop_DDR &= ~noodstop_BIT;
     noodstop_PORT |= noodstop_BIT;
     EICRA |= ISC20|ISC21;
-    EIMSK |= INT2;
+    //EIMSK |= INT2;
     sei();
 }
 
