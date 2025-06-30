@@ -234,11 +234,15 @@ int main(void){
                 lampjesSet(GEEL, 0); // geel uit
                 sectionInitialized = 1;
             }
-
-            if ((time - sectionStartTime) >= driveToPushTime) {
+             if (((time - sectionStartTime) <= driveToPushTime) && (com_agvDone)){
+                com_rechtCommand(0x00, DRIVESPEEDSCALED, 0xff); // achteruit opnieuw sturen
+                com_agvDone = 0 ;
+            }
+            if ((time - sectionStartTime) >= (driveToPushTime+1)) {
                 com_rechtCommand(0xff / 2, 0, 0xff);  // Stop
                 operatingState = e_end;
             }
+
             break;
     }
 
